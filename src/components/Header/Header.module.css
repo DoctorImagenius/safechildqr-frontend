@@ -1,0 +1,86 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: #0d1b2a;
+  color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #e0e1dd;
+  cursor: pointer;
+}
+
+.nav {
+  display: none;
+  gap: 20px;
+}
+
+.nav a {
+  color: #e0e1dd;
+  text-decoration: none;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.nav a:hover {
+  background: #1b263b;
+  color: #fca311;
+}
+
+.bottomNav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 0;
+  background: #0d1b2a;
+  border-top: 1px solid #1b263b;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  font-size: 22px;
+  z-index: 100;
+}
+
+.bottomNav a {
+  color: #e0e1dd;
+  transition: all 0.2s ease;
+}
+
+.bottomNav a:hover {
+  color: #fca311;
+}
+
+.bottomNav .active {
+  color: #fca311;
+}
+
+.nav a.active {
+  color: #fca311;
+  background: #1b263b;
+
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .bottomNav {
+    display: none;
+  }
+   .nav {
+    display: flex;
+  }
+}
+
