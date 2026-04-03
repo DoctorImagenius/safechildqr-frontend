@@ -10,7 +10,6 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    
     logout();
     navigate("/");
   };
@@ -18,7 +17,7 @@ const Header = () => {
   return (
     <>
       <header className={styles.header}>
-        <div className={styles.logo}>SafeChildQR</div>
+        <div className={styles.logo}>SafeChild<spane className={styles.qr}>QR</spane></div>
         <nav className={styles.nav}>
           {!token ? (
             <>
