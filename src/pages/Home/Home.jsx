@@ -1,21 +1,18 @@
-import { Link } from "react-router-dom";
 import styles from "./Home.module.css";
+import { NavLink } from "react-router-dom";
 
 const Home = () => {
   return (
     <div className={styles.container}>
-      <h1>SafeChildQR</h1>
-      <p>Protect your child with QR-based safety system</p>
-
-      <div className={styles.actions}>
-        <Link to="/scanner" className="btn btn-primary">
-          Scan QR
-        </Link>
-
-        <Link to="/signup" className="btn">
-          Get Started
-        </Link>
-      </div>
+      <section className={styles.hero}>
+        <h1>SafeChildQR</h1>
+        <p>Protect and track your children with QR codes. Easy, fast, and safe.</p>
+        <div className={styles.buttons}>
+          <NavLink to="/signup" className={styles.cta}>Sign Up</NavLink>
+          <NavLink to="/login" className={styles.ctaSecondary}>Login</NavLink>
+          <NavLink to="/scanner" className={styles.cta}>Scan QR</NavLink>
+        </div>
+      </section>
     </div>
   );
 };

@@ -10,6 +10,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    
     logout();
     navigate("/");
   };
@@ -46,7 +47,6 @@ const Header = () => {
                 <FaCog /> Settings
               </NavLink>
               <NavLink
-                to="/"
                 onClick={() => {
                   handleLogout();
                 }}
@@ -86,7 +86,6 @@ const Header = () => {
               <FaCog />
             </NavLink>
             <NavLink
-              to="/"
               onClick={() => {
                 handleLogout();
               }}
