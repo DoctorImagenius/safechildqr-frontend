@@ -1,0 +1,265 @@
+.settings {
+  min-height: calc(100vh - 70px);
+  background: #ebf3fc;
+  padding: 40px 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.settingsHeader {
+  margin-bottom: 32px;
+}
+
+.settingsHeader h2 {
+  font-size: 32px;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.settingsHeader p {
+  color: #64748b;
+}
+
+.settingsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.settingsCard {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.cardIcon {
+  font-size: 24px;
+  color: #f59e0b;
+}
+
+.cardHeader h3 {
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.infoRow span {
+  color: #64748b;
+}
+
+.infoRow strong {
+  color: #0f172a;
+}
+
+.infoNote {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 12px;
+}
+
+.updateForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: #f59e0b;
+}
+
+.formGroup small {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.updateBtn {
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.updateBtn:hover:not(:disabled) {
+  background: #d97706;
+  transform: translateY(-2px);
+}
+
+.updateBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dangerCard {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.dangerText {
+  color: #dc2626;
+  font-size: 14px;
+  margin-bottom: 20px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+}
+
+.deleteAccountBtn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.deleteAccountBtn:hover {
+  background: #b91c1c;
+  transform: translateY(-2px);
+}
+
+.confirmBox {
+  background: white;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #fecaca;
+}
+
+.confirmBox p {
+  color: #dc2626;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 12px;
+}
+
+.confirmDelete {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.confirmDelete:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.cancelDelete {
+  background: #e2e8f0;
+  color: #0f172a;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.cancelDelete:hover {
+  background: #cbd5e1;
+}
+
+.logoutBtn {
+  width: 100%;
+  background: #e2e8f0;
+  color: #0f172a;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.logoutBtn:hover {
+  background: #cbd5e1;
+  transform: translateY(-2px);
+}
+
+.locationWarning {
+  background: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #92400e;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 640px) {
+  .settings {
+    padding: 20px 0;
+    padding-bottom: 60px;
+  }
+  
+  .settingsCard {
+    padding: 20px;
+  }
+  
+  .confirmActions {
+    flex-direction: column;
+
+  }
+}

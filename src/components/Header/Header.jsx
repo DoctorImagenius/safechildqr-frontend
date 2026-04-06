@@ -17,7 +17,7 @@ const Header = () => {
   return (
     <>
       <header className={styles.header}>
-        <div className={styles.logo}>SafeChild<spane className={styles.qr}>QR</spane></div>
+        <div className={styles.logo} onClick={() => navigate("/")}>SafeChild<spane className={styles.qr}>QR</spane></div>
         <nav className={styles.nav}>
           {!token ? (
             <>
