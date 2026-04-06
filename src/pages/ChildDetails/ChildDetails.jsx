@@ -1,20 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { childAPI } from "../../services/api";
 import { toast } from "react-toastify";
-import { 
-  FaChild, FaEdit, FaTrash, FaArrowLeft, FaSave, 
-  FaTimes, FaMapMarkerAlt, FaLocationArrow, FaExternalLinkAlt
+import {
+  FaChild, FaEdit, FaTrash, FaArrowLeft, FaSave,
+  FaTimes, FaMapMarkerAlt, FaLocationArrow, FaExternalLinkAlt,
+  FaQrcode, FaDownload
 } from "react-icons/fa";
+import QRCode from "react-qrcode-logo";
 import styles from "./ChildDetails.module.css";
+import { AuthContext } from "../../context/AuthContext";
+
 
 export default function ChildDetails() {
+
+  const websiteUrl = "http://192.168.0.108:3001";
+
+  const { user } = useContext(AuthContext);
   const { id } = useParams();
   const navigate = useNavigate();
   const [child, setChild] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
+  const [qrValue, setQrValue] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     age: "",
@@ -37,11 +46,32 @@ export default function ChildDetails() {
         emergencyMessage: res.data.emergencyMessage || "",
         location: res.data.location || { lat: null, lon: null }
       });
+      const qrCodeValue = `${websiteUrl}/scan/${res.data._id}+${user.emergencyNumber}`;
+      setQrValue(qrCodeValue);
     } catch (error) {
       toast.error("Failed to load child");
       navigate("/dashboard");
     } finally {
       setLoading(false);
+    }
+  };
+
+
+  const downloadQRCode = () => {
+    const canvas = document.getElementById("qr-code-canvas");
+    if (canvas) {
+      const pngUrl = canvas
+        .toDataURL("image/png")
+        .replace("image/png", "image/octet-stream");
+      const downloadLink = document.createElement("a");
+      downloadLink.href = pngUrl;
+      downloadLink.download = `${child?.name || "child"}_SafeChildQR.png`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      toast.success("QR Code downloaded successfully!");
+    } else {
+      toast.error("Failed to generate QR code");
     }
   };
 
@@ -80,7 +110,7 @@ export default function ChildDetails() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-     if (!formData.name) {
+    if (!formData.name) {
       toast.error("Name is required");
       return;
     }
@@ -100,7 +130,7 @@ export default function ChildDetails() {
       } else {
         updateData.location = { lat: null, lon: null };
       }
-      
+
       await childAPI.update(id, updateData);
       toast.success("Updated successfully");
       setIsEditing(false);
@@ -177,7 +207,7 @@ export default function ChildDetails() {
                 <div className={styles.locationDisplay}>
                   <p><strong>Latitude:</strong> {child.location.lat}</p>
                   <p><strong>Longitude:</strong> {child.location.lon}</p>
-                  <button 
+                  <button
                     className={styles.mapButton}
                     onClick={() => openGoogleMaps(child.location.lat, child.location.lon)}
                   >
@@ -188,16 +218,42 @@ export default function ChildDetails() {
             )}
 
             <div className={styles.infoBox}>
-              <h3>QR Code</h3>
-              <p className={styles.qrText}>ID: {child._id}</p>
-              <p className={styles.qrHint}>Scan this QR code to get child information</p>
+              <h3><FaQrcode /> QR Code</h3>
+              <div className={styles.qrContainer}>
+                <div className={styles.qrCodeWrapper}>
+                  <QRCode
+                    id="qr-code-canvas"
+                    value={qrValue}
+                    size={180}
+                    bgColor="#ffffff"
+                    fgColor="#000000"
+                    level="H"
+                    includeMargin={true}
+                  />
+                </div>
+                <div className={styles.qrInfo}>
+                  <p className={styles.qrText}>
+                    <strong>Scan Code:</strong> {qrValue}
+                  </p>
+                  <p className={styles.qrHint}>
+                    This QR code contains: <strong>Child ID + Emergency Number</strong>
+                  </p>
+
+                  <button
+                    className={styles.downloadQrBtn}
+                    onClick={downloadQRCode}
+                  >
+                    <FaDownload /> Download QR Code
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         ) : (
           /* Edit Mode */
           <form onSubmit={handleSubmit} className={styles.editMode}>
             <h2>Edit Child</h2>
-            
+
             <div className={styles.field}>
               <label>Name <span>* Required</span></label>
               <input
@@ -205,6 +261,7 @@ export default function ChildDetails() {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Child's name"
+                required
               />
             </div>
 
@@ -235,19 +292,19 @@ export default function ChildDetails() {
               <div className={styles.locationWarning}>
                 ⚠️ Location is sensitive information - share only if necessary for child's safety
               </div>
-              
+
               {formData.location?.lat && formData.location?.lon ? (
                 <div className={styles.locationPreview}>
                   <p><strong>Latitude:</strong> {formData.location.lat}</p>
                   <p><strong>Longitude:</strong> {formData.location.lon}</p>
-                  <button 
+                  <button
                     type="button"
                     className={styles.testMapBtn}
                     onClick={() => openGoogleMaps(formData.location.lat, formData.location.lon)}
                   >
                     Test Location on Maps
                   </button>
-                  <button 
+                  <button
                     type="button"
                     className={styles.clearLocationBtn}
                     onClick={() => setFormData({ ...formData, location: { lat: null, lon: null } })}
@@ -256,7 +313,7 @@ export default function ChildDetails() {
                   </button>
                 </div>
               ) : (
-                <button 
+                <button
                   type="button"
                   className={styles.locationBtn}
                   onClick={getCurrentLocation}
@@ -266,8 +323,8 @@ export default function ChildDetails() {
                 </button>
               )}
               <small className={styles.locationHint}>
-                  This will help finders locate your child's parents more easily 
-                </small>
+                This will help finders locate your child's home more easily
+              </small>
             </div>
 
             <div className={styles.formActions}>
