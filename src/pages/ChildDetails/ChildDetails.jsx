@@ -14,8 +14,6 @@ import { AuthContext } from "../../context/AuthContext";
 
 export default function ChildDetails() {
 
-  const websiteUrl = "http://192.168.0.108:3001";
-
   const { user } = useContext(AuthContext);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -46,7 +44,7 @@ export default function ChildDetails() {
         emergencyMessage: res.data.emergencyMessage || "",
         location: res.data.location || { lat: null, lon: null }
       });
-      const qrCodeValue = `${websiteUrl}/scan/${res.data._id}+${user.emergencyNumber}`;
+      const qrCodeValue = `${process.env.REACT_APP_WEB_URL}/scan/${res.data._id}+${user.emergencyNumber}`;
       setQrValue(qrCodeValue);
     } catch (error) {
       toast.error("Failed to load child");

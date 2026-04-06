@@ -1,9 +1,8 @@
 import { createContext, useEffect, useState } from "react";
-import axios from "axios";
+import {parentAPI} from "../services/api"
 
 export const AuthContext = createContext();
 
-const API_URL = "http://localhost:3000";
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
@@ -14,17 +13,15 @@ export const AuthProvider = ({ children }) => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) {
       setToken(savedToken);
-      fetchUser(savedToken);
+      fetchUser();
     } else {
       setLoading(false);
     }
   }, []);
 
-  const fetchUser = async (authToken) => {
+  const fetchUser = async () => {
     try {
-      const response = await axios.get(`${API_URL}/parent/me`, {
-        headers: { Authorization: `Bearer ${authToken}` }
-      });
+      const response = await parentAPI.getProfile();
       setUser(response.data);
     } catch (error) {
       console.error("Failed to fetch user:", error);
@@ -38,7 +35,7 @@ export const AuthProvider = ({ children }) => {
   const login = (newToken) => {
     localStorage.setItem("token", newToken);
     setToken(newToken);
-    fetchUser(newToken);
+    fetchUser();
   };
 
   const logout = () => {
