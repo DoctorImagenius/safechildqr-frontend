@@ -80,14 +80,16 @@ const handleShareLocation = async () => {
   if (gettingLocation) return;
 
   if (!navigator.geolocation) {
-    toast.error("Geolocation not supported on this device");
+    toast.error("Geolocation not supported");
     return;
   }
-  
+
   const phone = parentData.emergencyNumber.replace(/^0/, "92");
 
+  // ✅ STEP 1: Pre-open window (IMPORTANT)
+  const newWindow = window.open("", "_blank");
+
   setGettingLocation(true);
-  toast.info("Please allow location access...");
 
   try {
     const position = await new Promise((resolve, reject) => {
@@ -108,9 +110,12 @@ const handleShareLocation = async () => {
       `⚠️ Please come immediately!`
     );
 
-    window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
-    toast.success("Location shared successfully!");
+    // ✅ STEP 2: Update opened window
+    newWindow.location.href = `https://wa.me/${phone}?text=${message}`;
+
   } catch (error) {
+    newWindow.close(); // ❌ close if failed
+
     if (error.code === 1) {
       toast.error("Location permission denied");
     } else {
