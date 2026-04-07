@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 import jsQR from "jsqr";
-import { FaQrcode, FaArrowLeft, FaCamera } from "react-icons/fa";
+import { FaQrcode, FaCamera } from "react-icons/fa";
 import styles from "./Scanner.module.css";
 
 export default function Scanner() {
@@ -40,10 +40,10 @@ export default function Scanner() {
       canvas.height = img.height;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, img.width, img.height);
-      
+
       const imageData = ctx.getImageData(0, 0, img.width, img.height);
       const code = jsQR(imageData.data, imageData.width, imageData.height);
-      
+
       if (code && code.data) {
         // QR code detected!
         if (scanIntervalRef.current) {
@@ -66,21 +66,20 @@ export default function Scanner() {
         captureAndScan();
       }, 500);
     }
-    
+
     return () => {
       if (scanIntervalRef.current) {
         clearInterval(scanIntervalRef.current);
       }
     };
+    // eslint-disable-next-line
   }, [scanning]);
 
   const processQRCode = (decodedText) => {
-    let scanCode = decodedText;
-    if (decodedText.includes("/scan/")) {
-      scanCode = decodedText.split("/scan/")[1];
-    }
+
+    decodedText = decodedText.split("/scan/")[1];
     stopScanner();
-    navigate(`/scan/${scanCode}`);
+    navigate(`/scan/${decodedText}`);
   };
 
   const videoConstraints = {
@@ -92,9 +91,7 @@ export default function Scanner() {
       <div className={styles.container}>
         {/* Header */}
         <div className={styles.header}>
-          <button className={styles.backBtn} onClick={() => navigate(-1)}>
-            <FaArrowLeft /> Back
-          </button>
+
           <div className={styles.title}>
             <FaQrcode className={styles.titleIcon} />
             <h1>Scan QR Code</h1>
@@ -161,26 +158,6 @@ export default function Scanner() {
               <p>Page will automatically redirect when QR is detected</p>
             </div>
           </div>
-        </div>
-
-        {/* Manual Entry */}
-        <div className={styles.manualOption}>
-          <p>Camera not working?</p>
-          <button
-            className={styles.manualBtn}
-            onClick={() => {
-              const code = prompt("Enter the QR code number:");
-              if (code) {
-                let scanCode = code;
-                if (code.includes("/scan/")) {
-                  scanCode = code.split("/scan/")[1];
-                }
-                navigate(`/scan/${scanCode}`);
-              }
-            }}
-          >
-            Enter Code Manually
-          </button>
         </div>
       </div>
     </div>

@@ -16,26 +16,6 @@
   position: relative;
 }
 
-.backBtn {
-  position: absolute;
-  left: 0;
-  top: 0;
-  background: #e2e8f0;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  transition: all 0.3s;
-}
-
-.backBtn:hover {
-  background: #cbd5e1;
-}
-
 .title {
   display: flex;
   align-items: center;
@@ -74,12 +54,18 @@
   padding: 60px 20px;
   background: #1e293b;
   border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .cameraIcon {
   font-size: 64px;
   color: #f59e0b;
   margin-bottom: 20px;
+  display: block;
 }
 
 .startBtn {
@@ -241,38 +227,6 @@
   margin: 0;
 }
 
-/* Manual Entry */
-.manualOption {
-  text-align: center;
-  padding: 16px;
-  background: white;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-}
-
-.manualOption p {
-  color: #64748b;
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
-.manualBtn {
-  background: none;
-  border: 2px solid #f59e0b;
-  color: #f59e0b;
-  padding: 8px 20px;
-  border-radius: 40px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.3s;
-}
-
-.manualBtn:hover {
-  background: #f59e0b;
-  color: white;
-}
-
 /* Mobile Responsive */
 @media (max-width: 640px) {
   .scannerPage {
@@ -282,11 +236,6 @@
 
   .header h1 {
     font-size: 20px;
-  }
-
-  .backBtn {
-    padding: 6px 12px;
-    font-size: 12px;
   }
 
   .scanFrame {
