@@ -1,4 +1,3 @@
-// src/pages/ScanPage/ScanPage.jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { scanAPI } from "../../services/api";
@@ -80,14 +79,11 @@ const handleShareLocation = async () => {
   if (gettingLocation) return;
 
   if (!navigator.geolocation) {
-    toast.error("Geolocation not supported");
+    toast.error("Geolocation not supported on this device");
     return;
   }
-
+  
   const phone = parentData.emergencyNumber.replace(/^0/, "92");
-
-  // ✅ STEP 1: Pre-open window (IMPORTANT)
-  const newWindow = window.open("", "_blank");
 
   setGettingLocation(true);
 
@@ -110,12 +106,8 @@ const handleShareLocation = async () => {
       `⚠️ Please come immediately!`
     );
 
-    // ✅ STEP 2: Update opened window
-    newWindow.location.href = `https://wa.me/${phone}?text=${message}`;
-
+    window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
   } catch (error) {
-    newWindow.close(); // ❌ close if failed
-
     if (error.code === 1) {
       toast.error("Location permission denied");
     } else {
