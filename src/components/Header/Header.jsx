@@ -11,13 +11,13 @@ const Header = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    navigate("/", { replace: true }); // Use replace to clear history
   };
 
   return (
     <>
       <header className={styles.header}>
-        <div className={styles.logo} onClick={() => navigate("/")}>SafeChild<spane className={styles.qr}>QR</spane></div>
+        <div className={styles.logo} onClick={() => navigate("/")}>SafeChild<span className={styles.qr}>QR</span></div>
         <nav className={styles.nav}>
           {!token ? (
             <>
@@ -45,13 +45,9 @@ const Header = () => {
               <NavLink to="/settings" className={({ isActive }) => isActive ? styles.active : ""}>
                 <FaCog /> Settings
               </NavLink>
-              <NavLink
-                onClick={() => {
-                  handleLogout();
-                }}
-              >
+              <button onClick={handleLogout} className={styles.logoutBtn}>
                 <FaSignOutAlt /> Logout
-              </NavLink>
+              </button>
             </>
           )}
         </nav>
@@ -62,35 +58,39 @@ const Header = () => {
           <>
             <NavLink to="/" className={({ isActive }) => isActive ? styles.active : ""}>
               <FaHome />
+              <span>Home</span>
             </NavLink>
             <NavLink to="/scanner" className={({ isActive }) => isActive ? styles.active : ""}>
               <FaQrcode />
+              <span>Scan</span>
             </NavLink>
             <NavLink to="/login" className={({ isActive }) => isActive ? styles.active : ""}>
               <FaSignInAlt />
+              <span>Login</span>
             </NavLink>
             <NavLink to="/signup" className={({ isActive }) => isActive ? styles.active : ""}>
               <FaUser />
+              <span>Signup</span>
             </NavLink>
           </>
         ) : (
           <>
             <NavLink to="/dashboard" className={({ isActive }) => isActive ? styles.active : ""}>
               <FaTachometerAlt />
+              <span>Dashboard</span>
             </NavLink>
             <NavLink to="/scanner" className={({ isActive }) => isActive ? styles.active : ""}>
               <FaQrcode />
+              <span>Scan</span>
             </NavLink>
             <NavLink to="/settings" className={({ isActive }) => isActive ? styles.active : ""}>
               <FaCog />
+              <span>Settings</span>
             </NavLink>
-            <NavLink
-              onClick={() => {
-                handleLogout();
-              }}
-            >
+            <button onClick={handleLogout} className={styles.logoutBottomBtn}>
               <FaSignOutAlt />
-            </NavLink>
+              <span>Logout</span>
+            </button>
           </>
         )}
       </div>

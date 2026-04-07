@@ -68,7 +68,7 @@ const Home = () => {
       <section className={styles.howItWorks}>
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
-            <h2>How SafeChildQR Works</h2>
+            <h2>How SafeChild<span className={styles.yellow}>QR</span> Works</h2>
             <p>Simple 3-step process to keep your child safe</p>
           </div>
           <div className={styles.steps}>

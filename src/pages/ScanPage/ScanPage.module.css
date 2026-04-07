@@ -1,0 +1,530 @@
+.scanPage {
+  min-height: 100vh;
+  background: #ebf3fc;
+  padding: 24px 20px;
+}
+
+.container {
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+/* Loading */
+.loadingContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #ebf3fc;
+  color: #1b263b;
+  text-align: center;
+}
+
+.loadingSpinner {
+  width: 60px;
+  height: 60px;
+  border: 3px solid rgba(27, 38, 59, 0.1);
+  border-top-color: #f59e0b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+.loadingSub {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 8px;
+  color: #5a6e8a;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Error */
+.errorContainer {
+  min-height: 94vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #ebf3fc;
+  text-align: center;
+  padding: 20px;
+}
+
+.errorIcon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  color: #f59e0b;
+  opacity: 0.8;
+}
+
+.errorContainer h2 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #1b263b;
+}
+
+.errorContainer p {
+  margin-bottom: 30px;
+  color: #5a6e8a;
+}
+
+.homeBtn {
+  background: #1b263b;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.homeBtn:hover {
+  background: #2a3a5c;
+  transform: translateY(-1px);
+}
+
+.homeBtn:active {
+  transform: scale(0.97);
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(245, 158, 11, 0.12);
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #f59e0b;
+  margin-bottom: 16px;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.header h1 {
+  font-size: 28px;
+  color: #1b263b;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.header p {
+  color: #5a6e8a;
+  font-size: 14px;
+}
+
+/* Sections */
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f59e0b;
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+.sectionTitle svg {
+  font-size: 16px;
+  color: #f59e0b;
+}
+
+/* Profile Card */
+.profileCard {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: white;
+  box-shadow: 0 4px 6px rgba(245, 158, 11, 0.2);
+}
+
+.profileName h2 {
+  font-size: 20px;
+  color: #1b263b;
+  margin-bottom: 4px;
+}
+
+.profileName p {
+  font-size: 11px;
+  color: #5a6e8a;
+  font-family: monospace;
+}
+
+.profileDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.detailRow span {
+  color: #5a6e8a;
+}
+
+.detailRow strong {
+  color: #1b263b;
+  font-weight: 600;
+}
+
+.statusBadge {
+  background: #fef3c7;
+  color: #d97706;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Message Card */
+.messageCard {
+  background: #fffbeb;
+  border-radius: 20px;
+  padding: 20px;
+  position: relative;
+  border-left: 4px solid #f59e0b;
+  border-right: 1px solid #fde68a;
+  border-top: 1px solid #fde68a;
+  border-bottom: 1px solid #fde68a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.messageCard::after {
+  content: '🚨';
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-size: 50px;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.messageCard p {
+  font-size: 15px;
+  color: #92400e;
+  line-height: 1.5;
+  text-align: center;
+  font-weight: 500;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Action Grid */
+.actionGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.actionCard {
+  background: #ffd6d6;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.actionCard:hover {
+  border-color: #f59e0b;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+  transform: translateY(-2px);
+}
+
+.actionCard:active {
+  transform: scale(0.97);
+}
+
+.actionCard:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.actionIconCall {
+  font-size: 28px;
+  color: #f59e0b;
+  margin-bottom: 8px;
+}
+
+.actionIconWhatsapp {
+  font-size: 28px;
+  color: #f59e0b;
+  margin-bottom: 8px;
+}
+
+.actionIconLocation {
+  font-size: 28px;
+  color: #f59e0b;
+  margin-bottom: 8px;
+}
+
+.actionCard h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1b263b;
+  margin-bottom: 4px;
+}
+
+.actionCard p {
+  font-size: 10px;
+  color: #5a6e8a;
+}
+
+/* Contact Card */
+.contactCard {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+}
+
+.contactNumberWrapper {
+  margin-bottom: 16px;
+}
+
+.contactLabel {
+  display: block;
+  font-size: 12px;
+  color: #5a6e8a;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.contactNumber {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.contactNumber svg {
+  color: #f59e0b;
+  font-size: 18px;
+}
+
+.contactNumber span {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1b263b;
+  font-family: monospace;
+  letter-spacing: 0.5px;
+}
+
+.copyBtn {
+  background: #1b263b;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: white;
+  transition: all 0.2s;
+}
+
+.copyBtn:hover {
+  background: #2a3a5c;
+  transform: translateY(-1px);
+}
+
+.copyBtn:active {
+  transform: scale(0.95);
+}
+
+.contactNote {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #5a6e8a;
+  background: #f8fafc;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-top: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.contactNote svg {
+  color: #f59e0b;
+}
+
+/* Location Card */
+.locationCard {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+}
+
+.coordinates {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.coordinates span {
+  font-size: 13px;
+  font-family: monospace;
+  color: #1b263b;
+}
+
+.mapLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #1b263b;
+  color: white;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.mapLink:hover {
+  background: #2a3a5c;
+  transform: translateY(-1px);
+}
+
+.mapLink:active {
+  transform: scale(0.97);
+}
+
+.mapLink svg {
+  color: #f59e0b;
+}
+
+/* Footer */
+.footerNote {
+  background: rgba(27, 38, 59, 0.06);
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  border: 1px solid rgba(27, 38, 59, 0.1);
+}
+
+.footerNote svg {
+  color: #f59e0b;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.footerNote p {
+  font-size: 11px;
+  color: #1b263b;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .scanPage {
+    padding: 16px;
+    padding-bottom: 100px;
+  }
+  
+  .header h1 {
+    font-size: 24px;
+  }
+  
+  .actionGrid {
+    gap: 8px;
+  }
+  
+  .actionCard {
+    padding: 12px 8px;
+  }
+  
+  .actionIconCall,
+  .actionIconWhatsapp,
+  .actionIconLocation {
+    font-size: 24px;
+  }
+  
+  .actionCard h4 {
+    font-size: 11px;
+  }
+  
+  .contactNumber span {
+    font-size: 14px;
+  }
+  
+  .profileHeader {
+    gap: 12px;
+  }
+  
+  .avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+  
+  .profileName h2 {
+    font-size: 18px;
+  }
+}

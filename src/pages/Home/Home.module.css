@@ -597,6 +597,10 @@
   color: #94a3b8;
 }
 
+.yellow{
+  color: #f59e0b;
+}
+
 /* Responsive */
 @media (max-width: 968px) {
   .hero .container,
