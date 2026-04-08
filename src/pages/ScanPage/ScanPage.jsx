@@ -28,122 +28,9 @@ export default function ScanPage() {
   const [childData, setChildData] = useState(null);
   const [parentData, setParentData] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [gettingLocation, setGettingLocation] = useState(false);
+  const [gettingLocation, setGettingLocation] = useState(false); // Sirf ye 1 state
   const [scanTime, setScanTime] = useState(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-
-
-  const [locationPermission, setLocationPermission] = useState(null);
-  const [waitingForLocation, setWaitingForLocation] = useState(false);
-
-  useEffect(() => {
-    checkLocationPermission();
-  }, []);
-
-  const checkLocationPermission = async () => {
-    if (!navigator.permissions) return;
-
-    try {
-      const result = await navigator.permissions.query({ name: 'geolocation' });
-      setLocationPermission(result.state);
-
-      result.addEventListener('change', () => {
-        setLocationPermission(result.state);
-      });
-    } catch (error) {
-      console.error("Permission check error:", error);
-    }
-  };
-
-  const handleShareLocation = async () => {
-    if (gettingLocation) return;
-
-    if (!isOnline) {
-      toast.warning("Location sharing requires internet connection");
-      return;
-    }
-
-    if (!navigator.geolocation) {
-      toast.error("Geolocation not supported on this device");
-      return;
-    }
-
-    // If permission is already granted, proceed directly
-    if (locationPermission === 'granted') {
-      await getLocationAndShare();
-      return;
-    }
-
-    // If permission not granted yet, request with user feedback
-    setWaitingForLocation(true);
-
-    try {
-      const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          maximumAge: 0
-        });
-      });
-
-      // Permission granted, now update status and proceed
-      setLocationPermission('granted');
-      await shareLocationWithPosition(position);
-
-    } catch (error) {
-      if (error.code === 1) {
-        toast.error("Location permission denied. Please enable location access in your browser settings.");
-        setLocationPermission('denied');
-      } else {
-        toast.error("Unable to get location");
-      }
-    } finally {
-      setWaitingForLocation(false);
-    }
-  };
-
-  const getLocationAndShare = async () => {
-    setGettingLocation(true);
-
-    try {
-      const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          maximumAge: 0
-        });
-      });
-
-      await shareLocationWithPosition(position);
-    } catch (error) {
-      if (error.code === 1) {
-        toast.error("Location permission denied");
-      } else {
-        toast.error("Unable to get location");
-      }
-    } finally {
-      setGettingLocation(false);
-    }
-  };
-
-  const shareLocationWithPosition = async (position) => {
-    const { latitude, longitude } = position.coords;
-    const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-    const phone = parentData.emergencyNumber.replace(/^0/, "92");
-
-    const message = encodeURIComponent(
-      `🚨 URGENT: Child Location Shared!\n\n` +
-      `👶 Child: ${childData?.name || "Unknown"}\n` +
-      `📍 Location: ${mapsLink}\n` +
-      `⏰ Time: ${new Date().toLocaleString()}\n\n` +
-      `⚠️ Please come immediately!`
-    );
-
-    // Small delay to ensure everything is ready
-    setTimeout(() => {
-      window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
-    }, 100);
-  };
-
-
 
   useEffect(() => {
     setScanTime(new Date().toLocaleString());
@@ -259,6 +146,67 @@ export default function ScanPage() {
     window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
   };
 
+  // ✅ SIMPLIFIED LOCATION FUNCTION - YAHI SIRF CHANGE HUA HAI
+  const handleShareLocation = async () => {
+    if (!isOnline) {
+      toast.warning("Internet connection required to share location");
+      return;
+    }
+
+    if (!parentData?.emergencyNumber) {
+      toast.error("Emergency number not available");
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported on this device");
+      return;
+    }
+
+    setGettingLocation(true);
+
+    try {
+      // Browser automatically handles permission popup
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        });
+      });
+
+      // Location mil gayi, ab WhatsApp kholo
+      const { latitude, longitude } = position.coords;
+      const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+      const phone = parentData.emergencyNumber.replace(/^0/, "92");
+      
+      const message = encodeURIComponent(
+        `🚨 URGENT: Child Location Shared!\n\n` +
+        `👶 Child: ${childData?.name || "Unknown"}\n` +
+        `📍 Location: ${mapsLink}\n` +
+        `⏰ Time: ${new Date().toLocaleString()}\n\n` +
+        `⚠️ Please come immediately!`
+      );
+
+      // WhatsApp automatically open hoga
+      window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
+      toast.success("Location shared! WhatsApp opening...");
+      
+    } catch (error) {
+      // Error handling based on error code
+      if (error.code === 1) {
+        toast.error("Please allow location access to share your location");
+      } else if (error.code === 2) {
+        toast.error("Location unavailable. Please try again");
+      } else if (error.code === 3) {
+        toast.error("Location request timed out. Please try again");
+      } else {
+        toast.error("Unable to get your location");
+      }
+    } finally {
+      setGettingLocation(false);
+    }
+  };
 
   const handleCopyNumber = () => {
     if (parentData?.emergencyNumber) {
@@ -381,29 +329,19 @@ export default function ScanPage() {
               </div>
             </button>
 
-            {/* Location Button with dynamic text */}
+            {/* ✅ SIMPLIFIED LOCATION BUTTON - SIRF YAHAN CHANGE */}
             <button
               className={styles.actionCard}
               onClick={handleShareLocation}
-              disabled={gettingLocation || waitingForLocation || !isOnline}
+              disabled={gettingLocation || !isOnline}
             >
               <FaLocationArrow className={styles.actionIconLocation} />
               <div>
-                <h4>
-                  {gettingLocation
-                    ? "Getting location..."
-                    : waitingForLocation
-                      ? "Allow location access..."
-                      : "Share Location"}
-                </h4>
+                <h4>{gettingLocation ? "Getting location..." : "Share Location"}</h4>
                 <p>
-                  {!isOnline
-                    ? "Requires internet"
-                    : locationPermission === 'granted'
-                      ? "Send current location"
-                      : locationPermission === 'denied'
-                        ? "Location access blocked"
-                        : "Allow location to share"}
+                  {!isOnline 
+                    ? "Requires internet" 
+                    : "Send current location via WhatsApp"}
                 </p>
               </div>
             </button>
