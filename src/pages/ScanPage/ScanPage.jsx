@@ -81,7 +81,10 @@ export default function ScanPage() {
 
   useEffect(() => {
     setScanTime(new Date().toLocaleString());
-    const handleOnline = () => setIsOnline(true);
+    const handleOnline = () => {
+      setIsOnline(true);
+      fetchScanData();
+    };
     const handleOffline = () => setIsOnline(false);
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
@@ -106,14 +109,7 @@ export default function ScanPage() {
     const newWindow = window.open(whatsappUrl, "_blank");
 
     if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-      toast.info(
-        <div>
-          Popup blocked!
-          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">Click here to open WhatsApp</a>
-        </div>
-      );
-    } else {
-      toast.success("Opening WhatsApp...");
+      toast.success("Permission granted, Now press location button");
     }
   };
 
@@ -233,7 +229,6 @@ export default function ScanPage() {
     document.body.removeChild(textarea);
   };
 
-  // 1. extractNumberFromCode function - Return 03xxx format
   const extractNumberFromCode = (qrCode) => {
     if (!qrCode) return null;
     const phonePattern = /(\+?92|0)?[0-9]{10,13}/g;
@@ -249,18 +244,18 @@ export default function ScanPage() {
     return null;
   };
 
-  // 2. fetchScanData - Direct use karo without adding 92
   const fetchScanData = async () => {
     if (!navigator.onLine) {
       setLoading(false);
       const extractedNumber = extractNumberFromCode(code);
       if (extractedNumber) {
-        setParentData({ emergencyNumber: extractedNumber }); // Direct
+        setParentData({ emergencyNumber: extractedNumber });
         setChildData({
           name: "Child Information Unavailable",
           age: "Unknown",
           emergencyMessage: "Please contact the parent immediately using the number above."
         });
+        toast.warning("No internet connection. Showing offline data.");
       }
       return;
     }
@@ -270,20 +265,9 @@ export default function ScanPage() {
       setChildData(response.data.child);
       setParentData(response.data.parent);
     } catch (error) {
-      console.error("Scan error:", error);
-      const extractedNumber = extractNumberFromCode(code);
-      if (extractedNumber) {
-        setParentData({ emergencyNumber: extractedNumber }); // Direct
-        setChildData({
-          name: "Child Information Unavailable (Offline Mode)",
-          age: "Unknown",
-          emergencyMessage: "No internet connection. Please contact the parent/guardian using the number below."
-        });
-        toast.warning("No internet connection. Showing offline data.");
-      } else {
-        toast.error("Invalid QR code or no internet connection");
-        setChildData(null);
-      }
+      setChildData(null)
+      setParentData(null)
+      toast.warning("No Child Found. Please try again.");
     } finally {
       setLoading(false);
     }
