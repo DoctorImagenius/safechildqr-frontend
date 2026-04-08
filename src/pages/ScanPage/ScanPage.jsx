@@ -28,91 +28,137 @@ export default function ScanPage() {
   const [childData, setChildData] = useState(null);
   const [parentData, setParentData] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [gettingLocation, setGettingLocation] = useState(false); // Sirf ye 1 state
+  const [gettingLocation, setGettingLocation] = useState(false);
   const [scanTime, setScanTime] = useState(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  
+  // ✅ New state for location permission
+  const [hasLocationPermission, setHasLocationPermission] = useState(false);
+  const [savedLocation, setSavedLocation] = useState(null);
 
+  // ✅ Check if location permission already granted
   useEffect(() => {
-    setScanTime(new Date().toLocaleString());
+    checkExistingPermission();
+  }, []);
 
-    // Check if online/offline
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    fetchScanData();
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-    // eslint-disable-next-line
-  }, [code]);
-
-  const fetchScanData = async () => {
-    // Check if online
-    if (!navigator.onLine) {
-      setLoading(false);
-      // Try to extract number from QR code for offline mode
-      const extractedNumber = extractNumberFromCode(code);
-      if (extractedNumber) {
-        setParentData({ emergencyNumber: extractedNumber });
-        setChildData({
-          name: "Child Information Unavailable",
-          age: "Unknown",
-          emergencyMessage: "Please contact the parent immediately using the number above."
-        });
+  const checkExistingPermission = async () => {
+    if (!navigator.permissions) return;
+    
+    try {
+      const result = await navigator.permissions.query({ name: 'geolocation' });
+      if (result.state === 'granted') {
+        setHasLocationPermission(true);
       }
+      
+      // Listen for permission changes
+      result.addEventListener('change', () => {
+        if (result.state === 'granted') {
+          setHasLocationPermission(true);
+        } else if (result.state === 'denied') {
+          setHasLocationPermission(false);
+          setSavedLocation(null);
+        }
+      });
+    } catch (error) {
+      console.error("Permission check error:", error);
+    }
+  };
+
+  // ✅ Main function - handles both permission and sharing
+  const handleShareLocation = async () => {
+    if (!isOnline) {
+      toast.warning("Internet connection required");
       return;
     }
 
-    try {
-      const response = await scanAPI.scan(code);
-      setChildData(response.data.child);
-      setParentData(response.data.parent);
-    } catch (error) {
-      console.error("Scan error:", error);
+    if (!parentData?.emergencyNumber) {
+      toast.error("Emergency number not available");
+      return;
+    }
 
-      // Try offline fallback
-      const extractedNumber = extractNumberFromCode(code);
-      if (extractedNumber) {
-        setParentData({ emergencyNumber: extractedNumber });
-        setChildData({
-          name: "Child Information Unavailable (Offline Mode)",
-          age: "Unknown",
-          emergencyMessage: "No internet connection. Please contact the parent/guardian using the number below."
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported");
+      return;
+    }
+
+    // Case 1: Permission already granted and location saved
+    if (hasLocationPermission && savedLocation) {
+      sendLocationToWhatsApp(savedLocation);
+      return;
+    }
+
+    // Case 2: Need to get permission and location
+    setGettingLocation(true);
+    
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 30000
         });
-        toast.warning("No internet connection. Showing offline data.");
+      });
+
+      const locationData = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+        mapsLink: `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`
+      };
+
+      // Save location and permission status
+      setSavedLocation(locationData);
+      setHasLocationPermission(true);
+      
+      // Send to WhatsApp immediately
+      sendLocationToWhatsApp(locationData);
+      
+    } catch (error) {
+      if (error.code === 1) {
+        toast.error("Location access denied. Please allow location and try again.");
+        setHasLocationPermission(false);
+      } else if (error.code === 2) {
+        toast.error("Location unavailable. Please check your GPS");
+      } else if (error.code === 3) {
+        toast.error("Location request timed out. Please try again");
       } else {
-        toast.error("Invalid QR code or no internet connection");
-        setChildData(null);
+        toast.error("Unable to get your location");
       }
     } finally {
-      setLoading(false);
+      setGettingLocation(false);
     }
   };
 
-  // Extract phone number from QR code
-  const extractNumberFromCode = (qrCode) => {
-    if (!qrCode) return null;
-    // Try to find a phone number pattern in the QR code
-    const phonePattern = /(\+?92|0)?[0-9]{10,13}/g;
-    const matches = qrCode.match(phonePattern);
-    if (matches && matches.length > 0) {
-      let number = matches[0];
-      // Format number for Pakistan
-      if (number.startsWith('0')) {
-        number = '92' + number.substring(1);
-      } else if (!number.startsWith('+')) {
-        number = '+' + number;
-      }
-      return number;
+  // ✅ Function to send location on WhatsApp
+  const sendLocationToWhatsApp = (location) => {
+    const phone = parentData.emergencyNumber.replace(/^0/, "92");
+    const message = encodeURIComponent(
+      `🚨 URGENT: Child Location Shared!\n\n` +
+      `👶 Child: ${childData?.name || "Unknown"}\n` +
+      `📍 Location: ${location.mapsLink}\n` +
+      `⏰ Time: ${new Date().toLocaleString()}\n\n` +
+      `⚠️ Please come immediately!`
+    );
+
+    const whatsappUrl = `https://wa.me/${phone}?text=${message}`;
+    
+    // Try to open WhatsApp
+    const newWindow = window.open(whatsappUrl, "_blank");
+    
+    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+      // Popup blocked, show alternative
+      toast.info(
+        <div>
+          Popup blocked! 
+          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+            Click here to open WhatsApp
+          </a>
+        </div>
+      );
+    } else {
+      toast.success("Opening WhatsApp...");
     }
-    return null;
   };
 
+  // Rest of your existing functions (handleCall, handleWhatsApp, etc.) remain SAME
   const handleCall = () => {
     if (parentData?.emergencyNumber) {
       window.location.href = `tel:${parentData.emergencyNumber}`;
@@ -127,7 +173,6 @@ export default function ScanPage() {
       return;
     }
 
-    // Extra check for offline
     if (!isOnline) {
       toast.warning("WhatsApp requires internet connection. Please call the parent directly.");
       return;
@@ -144,68 +189,6 @@ export default function ScanPage() {
     );
 
     window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
-  };
-
-  // ✅ SIMPLIFIED LOCATION FUNCTION - YAHI SIRF CHANGE HUA HAI
-  const handleShareLocation = async () => {
-    if (!isOnline) {
-      toast.warning("Internet connection required to share location");
-      return;
-    }
-
-    if (!parentData?.emergencyNumber) {
-      toast.error("Emergency number not available");
-      return;
-    }
-
-    if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported on this device");
-      return;
-    }
-
-    setGettingLocation(true);
-
-    try {
-      // Browser automatically handles permission popup
-      const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
-        });
-      });
-
-      // Location mil gayi, ab WhatsApp kholo
-      const { latitude, longitude } = position.coords;
-      const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-      const phone = parentData.emergencyNumber.replace(/^0/, "92");
-      
-      const message = encodeURIComponent(
-        `🚨 URGENT: Child Location Shared!\n\n` +
-        `👶 Child: ${childData?.name || "Unknown"}\n` +
-        `📍 Location: ${mapsLink}\n` +
-        `⏰ Time: ${new Date().toLocaleString()}\n\n` +
-        `⚠️ Please come immediately!`
-      );
-
-      // WhatsApp automatically open hoga
-      window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
-      toast.success("Location shared! WhatsApp opening...");
-      
-    } catch (error) {
-      // Error handling based on error code
-      if (error.code === 1) {
-        toast.error("Please allow location access to share your location");
-      } else if (error.code === 2) {
-        toast.error("Location unavailable. Please try again");
-      } else if (error.code === 3) {
-        toast.error("Location request timed out. Please try again");
-      } else {
-        toast.error("Unable to get your location");
-      }
-    } finally {
-      setGettingLocation(false);
-    }
   };
 
   const handleCopyNumber = () => {
@@ -245,6 +228,81 @@ export default function ScanPage() {
     document.body.removeChild(textarea);
   };
 
+  // Keep all your existing useEffect and fetchScanData functions
+  useEffect(() => {
+    setScanTime(new Date().toLocaleString());
+
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    fetchScanData();
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+    // eslint-disable-next-line
+  }, [code]);
+
+  const fetchScanData = async () => {
+    if (!navigator.onLine) {
+      setLoading(false);
+      const extractedNumber = extractNumberFromCode(code);
+      if (extractedNumber) {
+        setParentData({ emergencyNumber: extractedNumber });
+        setChildData({
+          name: "Child Information Unavailable",
+          age: "Unknown",
+          emergencyMessage: "Please contact the parent immediately using the number above."
+        });
+      }
+      return;
+    }
+
+    try {
+      const response = await scanAPI.scan(code);
+      setChildData(response.data.child);
+      setParentData(response.data.parent);
+    } catch (error) {
+      console.error("Scan error:", error);
+      const extractedNumber = extractNumberFromCode(code);
+      if (extractedNumber) {
+        setParentData({ emergencyNumber: extractedNumber });
+        setChildData({
+          name: "Child Information Unavailable (Offline Mode)",
+          age: "Unknown",
+          emergencyMessage: "No internet connection. Please contact the parent/guardian using the number below."
+        });
+        toast.warning("No internet connection. Showing offline data.");
+      } else {
+        toast.error("Invalid QR code or no internet connection");
+        setChildData(null);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const extractNumberFromCode = (qrCode) => {
+    if (!qrCode) return null;
+    const phonePattern = /(\+?92|0)?[0-9]{10,13}/g;
+    const matches = qrCode.match(phonePattern);
+    if (matches && matches.length > 0) {
+      let number = matches[0];
+      if (number.startsWith('0')) {
+        number = '92' + number.substring(1);
+      } else if (!number.startsWith('+')) {
+        number = '+' + number;
+      }
+      return number;
+    }
+    return null;
+  };
+
+  // Loading and error screens remain SAME
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -307,7 +365,7 @@ export default function ScanPage() {
             <FaPhoneAlt /> Quick Actions
           </div>
           <div className={styles.actionGrid}>
-            {/* Call Button - ALWAYS enabled */}
+            {/* Call Button */}
             <button className={styles.actionCard} onClick={handleCall}>
               <FaPhoneAlt className={styles.actionIconCall} />
               <div>
@@ -316,7 +374,7 @@ export default function ScanPage() {
               </div>
             </button>
 
-            {/* WhatsApp Button - Disabled in offline mode */}
+            {/* WhatsApp Button */}
             <button
               className={styles.actionCard}
               onClick={handleWhatsApp}
@@ -329,7 +387,7 @@ export default function ScanPage() {
               </div>
             </button>
 
-            {/* ✅ SIMPLIFIED LOCATION BUTTON - SIRF YAHAN CHANGE */}
+            {/* ✅ SMART LOCATION BUTTON - Text changes based on state */}
             <button
               className={styles.actionCard}
               onClick={handleShareLocation}
@@ -337,18 +395,29 @@ export default function ScanPage() {
             >
               <FaLocationArrow className={styles.actionIconLocation} />
               <div>
-                <h4>{gettingLocation ? "Getting location..." : "Share Location"}</h4>
+                <h4>
+                  {gettingLocation 
+                    ? "Getting location..." 
+                    : hasLocationPermission && savedLocation
+                      ? "Send Location Now"
+                      : "Share Location"}
+                </h4>
                 <p>
-                  {!isOnline 
-                    ? "Requires internet" 
-                    : "Send current location via WhatsApp"}
+                  {!isOnline
+                    ? "Requires internet"
+                    : hasLocationPermission && savedLocation
+                      ? "Send current location via WhatsApp"
+                      : hasLocationPermission && !savedLocation
+                        ? "Getting location..."
+                        : "Allow location access"}
                 </p>
               </div>
             </button>
           </div>
         </div>
 
-        {/* Home Location Section - Only show if online and has location */}
+        {/* Rest of your JSX remains EXACTLY SAME from here */}
+        {/* Home Location Section */}
         {isOnline && childData?.location?.lat && childData?.location?.lon && (
           <div className={styles.section}>
             <div className={styles.sectionTitle}>
