@@ -264,6 +264,8 @@
 
 .actionCard {
   background: #ffd6d6;
+  background: linear-gradient(135deg, #ffeded, #ffcece);
+
   border: 1px solid #e2e8f0;
   border-radius: 16px;
   padding: 16px 12px;
@@ -494,6 +496,7 @@
 }
 
 .onlineBanner {
+  margin-top: 20px;
   background: #dcfce7;
   border-left: 4px solid #22c55e;
   border-radius: 12px;
@@ -555,7 +558,6 @@
   border-color: #e2e8f0;
 }
 
-/* Dynamic button states */
 .actionCard[disabled] {
   opacity: 0.7;
   cursor: wait;
@@ -563,6 +565,35 @@
 
 .actionCard[disabled]:active {
   transform: none;
+}
+
+.actionCard.locationReady {
+  background: linear-gradient(135deg, #dcfce7, #acffc9);
+  /* background: #dcfce7; */
+
+  transform: translateY(-2px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.actionCard.locationReady:hover {
+  border-color: #f59e0b;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+  transform: translateY(-4px);
+}
+
+.actionCard.locationReady h4{
+  color: rgb(0, 0, 0);
+}
+
+.actionCard.locationReady .actionIconLocation {
+  color: #f59e0b;
+  animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  75% { transform: rotate(-10deg); }
 }
 
 /* Pulse animation for waiting state */

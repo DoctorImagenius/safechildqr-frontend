@@ -16,7 +16,6 @@ import {
   FaShieldAlt,
   FaGlobe,
   FaInfoCircle,
-  FaWifi,
   FaPlaneSlash
 } from "react-icons/fa";
 import styles from "./ScanPage.module.css";
@@ -41,7 +40,7 @@ export default function ScanPage() {
       try {
         const result = await navigator.permissions.query({ name: 'geolocation' });
         setHasLocationPermission(result.state === 'granted');
-        
+
         result.addEventListener('change', () => {
           setHasLocationPermission(result.state === 'granted');
           if (result.state !== 'granted') setSavedLocation(null);
@@ -57,7 +56,7 @@ export default function ScanPage() {
   useEffect(() => {
     const getLocation = async () => {
       if (!hasLocationPermission || savedLocation) return;
-      
+
       setGettingLocation(true);
       try {
         const position = await new Promise((resolve, reject) => {
@@ -105,11 +104,11 @@ export default function ScanPage() {
     );
     const whatsappUrl = `https://wa.me/${phone}?text=${message}`;
     const newWindow = window.open(whatsappUrl, "_blank");
-    
+
     if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
       toast.info(
         <div>
-          Popup blocked! 
+          Popup blocked!
           <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">Click here to open WhatsApp</a>
         </div>
       );
@@ -234,12 +233,29 @@ export default function ScanPage() {
     document.body.removeChild(textarea);
   };
 
+  // 1. extractNumberFromCode function - Return 03xxx format
+  const extractNumberFromCode = (qrCode) => {
+    if (!qrCode) return null;
+    const phonePattern = /(\+?92|0)?[0-9]{10,13}/g;
+    const matches = qrCode.match(phonePattern);
+    if (matches && matches.length > 0) {
+      let number = matches[0];
+      // Convert 92xxxxx to 0xxxxxx for display
+      if (number.startsWith('92')) {
+        number = '0' + number.substring(2);
+      }
+      return number; // Returns like 03123456789
+    }
+    return null;
+  };
+
+  // 2. fetchScanData - Direct use karo without adding 92
   const fetchScanData = async () => {
     if (!navigator.onLine) {
       setLoading(false);
       const extractedNumber = extractNumberFromCode(code);
       if (extractedNumber) {
-        setParentData({ emergencyNumber: extractedNumber });
+        setParentData({ emergencyNumber: extractedNumber }); // Direct
         setChildData({
           name: "Child Information Unavailable",
           age: "Unknown",
@@ -257,7 +273,7 @@ export default function ScanPage() {
       console.error("Scan error:", error);
       const extractedNumber = extractNumberFromCode(code);
       if (extractedNumber) {
-        setParentData({ emergencyNumber: extractedNumber });
+        setParentData({ emergencyNumber: extractedNumber }); // Direct
         setChildData({
           name: "Child Information Unavailable (Offline Mode)",
           age: "Unknown",
@@ -271,22 +287,6 @@ export default function ScanPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const extractNumberFromCode = (qrCode) => {
-    if (!qrCode) return null;
-    const phonePattern = /(\+?92|0)?[0-9]{10,13}/g;
-    const matches = qrCode.match(phonePattern);
-    if (matches && matches.length > 0) {
-      let number = matches[0];
-      if (number.startsWith('0')) {
-        number = '92' + number.substring(1);
-      } else if (!number.startsWith('+')) {
-        number = '+' + number;
-      }
-      return number;
-    }
-    return null;
   };
 
   if (loading) {
@@ -325,16 +325,6 @@ export default function ScanPage() {
           </div>
         )}
 
-        {isOnline && (
-          <div className={styles.onlineBanner}>
-            <FaWifi className={styles.onlineIcon} />
-            <div>
-              <strong>Online Mode</strong>
-              <p>Full features available</p>
-            </div>
-          </div>
-        )}
-
         <div className={styles.header}>
           <div className={styles.badge}>
             <FaShieldAlt /> Verified Child Safety QR
@@ -364,7 +354,11 @@ export default function ScanPage() {
               </div>
             </button>
 
-            <button className={styles.actionCard} onClick={handleShareLocation} disabled={gettingLocation || !isOnline}>
+            <button
+              className={`${styles.actionCard} ${hasLocationPermission && savedLocation && !gettingLocation ? styles.locationReady : ''}`}
+              onClick={handleShareLocation}
+              disabled={gettingLocation || !isOnline}
+            >
               <FaLocationArrow className={styles.actionIconLocation} />
               <div>
                 <h4>
@@ -378,12 +372,22 @@ export default function ScanPage() {
                   {!isOnline
                     ? "Requires internet"
                     : hasLocationPermission && savedLocation
-                      ? "Send current location via WhatsApp"
+                      ? "⚡ Click to share on WhatsApp"
                       : "Allow location access"}
                 </p>
               </div>
             </button>
+
           </div>
+
+          {hasLocationPermission && savedLocation && (
+            <div className={styles.onlineBanner}>
+              <div>
+                <strong>Permission Granted</strong>
+                <p>You can now share your location</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {isOnline && childData?.location?.lat && childData?.location?.lon && (
