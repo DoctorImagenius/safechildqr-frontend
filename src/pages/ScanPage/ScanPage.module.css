@@ -555,6 +555,27 @@
   border-color: #e2e8f0;
 }
 
+/* Dynamic button states */
+.actionCard[disabled] {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.actionCard[disabled]:active {
+  transform: none;
+}
+
+/* Pulse animation for waiting state */
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+.actionCard:disabled .actionIconLocation {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
 @media (max-width: 500px) {
   .scanPage {
     padding: 16px;

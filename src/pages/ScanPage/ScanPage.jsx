@@ -32,6 +32,119 @@ export default function ScanPage() {
   const [scanTime, setScanTime] = useState(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
+
+  const [locationPermission, setLocationPermission] = useState(null);
+  const [waitingForLocation, setWaitingForLocation] = useState(false);
+
+  useEffect(() => {
+    checkLocationPermission();
+  }, []);
+
+  const checkLocationPermission = async () => {
+    if (!navigator.permissions) return;
+
+    try {
+      const result = await navigator.permissions.query({ name: 'geolocation' });
+      setLocationPermission(result.state);
+
+      result.addEventListener('change', () => {
+        setLocationPermission(result.state);
+      });
+    } catch (error) {
+      console.error("Permission check error:", error);
+    }
+  };
+
+  const handleShareLocation = async () => {
+    if (gettingLocation) return;
+
+    if (!isOnline) {
+      toast.warning("Location sharing requires internet connection");
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      toast.error("Geolocation not supported on this device");
+      return;
+    }
+
+    // If permission is already granted, proceed directly
+    if (locationPermission === 'granted') {
+      await getLocationAndShare();
+      return;
+    }
+
+    // If permission not granted yet, request with user feedback
+    setWaitingForLocation(true);
+
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          maximumAge: 0
+        });
+      });
+
+      // Permission granted, now update status and proceed
+      setLocationPermission('granted');
+      await shareLocationWithPosition(position);
+
+    } catch (error) {
+      if (error.code === 1) {
+        toast.error("Location permission denied. Please enable location access in your browser settings.");
+        setLocationPermission('denied');
+      } else {
+        toast.error("Unable to get location");
+      }
+    } finally {
+      setWaitingForLocation(false);
+    }
+  };
+
+  const getLocationAndShare = async () => {
+    setGettingLocation(true);
+
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          maximumAge: 0
+        });
+      });
+
+      await shareLocationWithPosition(position);
+    } catch (error) {
+      if (error.code === 1) {
+        toast.error("Location permission denied");
+      } else {
+        toast.error("Unable to get location");
+      }
+    } finally {
+      setGettingLocation(false);
+    }
+  };
+
+  const shareLocationWithPosition = async (position) => {
+    const { latitude, longitude } = position.coords;
+    const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+    const phone = parentData.emergencyNumber.replace(/^0/, "92");
+
+    const message = encodeURIComponent(
+      `🚨 URGENT: Child Location Shared!\n\n` +
+      `👶 Child: ${childData?.name || "Unknown"}\n` +
+      `📍 Location: ${mapsLink}\n` +
+      `⏰ Time: ${new Date().toLocaleString()}\n\n` +
+      `⚠️ Please come immediately!`
+    );
+
+    // Small delay to ensure everything is ready
+    setTimeout(() => {
+      window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
+    }, 100);
+  };
+
+
+
   useEffect(() => {
     setScanTime(new Date().toLocaleString());
 
@@ -146,53 +259,6 @@ export default function ScanPage() {
     window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
   };
 
-  const handleShareLocation = async () => {
-    if (gettingLocation) return;
-
-    if (!isOnline) {
-      toast.warning("Location sharing requires internet connection");
-      return;
-    }
-
-    if (!navigator.geolocation) {
-      toast.error("Geolocation not supported on this device");
-      return;
-    }
-
-    const phone = parentData.emergencyNumber.replace(/^0/, "92");
-
-    setGettingLocation(true);
-
-    try {
-      const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          maximumAge: 0
-        });
-      });
-
-      const { latitude, longitude } = position.coords;
-      const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-
-      const message = encodeURIComponent(
-        `🚨 URGENT: Child Location Shared!\n\n` +
-        `👶 Child: ${childData?.name || "Unknown"}\n` +
-        `📍 Location: ${mapsLink}\n` +
-        `⏰ Time: ${new Date().toLocaleString()}\n\n` +
-        `⚠️ Please come immediately!`
-      );
-
-      window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
-    } catch (error) {
-      if (error.code === 1) {
-        toast.error("Location permission denied");
-      } else {
-        toast.error("Unable to get location");
-      }
-    } finally {
-      setGettingLocation(false);
-    }
-  };
 
   const handleCopyNumber = () => {
     if (parentData?.emergencyNumber) {
@@ -260,7 +326,7 @@ export default function ScanPage() {
         {/* Offline Banner */}
         {!isOnline && (
           <div className={styles.offlineBanner}>
-              <FaPlaneSlash className={styles.offlineIcon} />
+            <FaPlaneSlash className={styles.offlineIcon} />
             <div>
               <strong>Offline Mode</strong>
               <p>Showing cached information. Some features may be limited.</p>
@@ -315,16 +381,30 @@ export default function ScanPage() {
               </div>
             </button>
 
-            {/* Location Button - Disabled in offline mode */}
+            {/* Location Button with dynamic text */}
             <button
               className={styles.actionCard}
               onClick={handleShareLocation}
-              disabled={gettingLocation || !isOnline}
+              disabled={gettingLocation || waitingForLocation || !isOnline}
             >
               <FaLocationArrow className={styles.actionIconLocation} />
               <div>
-                <h4>{gettingLocation ? "Waiting..." : "Share Location"}</h4>
-                <p>{!isOnline ? "Requires internet" : "Send location"}</p>
+                <h4>
+                  {gettingLocation
+                    ? "Getting location..."
+                    : waitingForLocation
+                      ? "Allow location access..."
+                      : "Share Location"}
+                </h4>
+                <p>
+                  {!isOnline
+                    ? "Requires internet"
+                    : locationPermission === 'granted'
+                      ? "Send current location"
+                      : locationPermission === 'denied'
+                        ? "Location access blocked"
+                        : "Allow location to share"}
+                </p>
               </div>
             </button>
           </div>
