@@ -16,6 +16,8 @@ import {
   FaShieldAlt,
   FaGlobe,
   FaInfoCircle,
+  FaWifi,
+  FaPlaneSlash
 } from "react-icons/fa";
 import styles from "./ScanPage.module.css";
 
@@ -28,24 +30,87 @@ export default function ScanPage() {
   const [copied, setCopied] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
   const [scanTime, setScanTime] = useState(null);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
     setScanTime(new Date().toLocaleString());
+
+    // Check if online/offline
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
     fetchScanData();
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
     // eslint-disable-next-line
   }, [code]);
 
   const fetchScanData = async () => {
+    // Check if online
+    if (!navigator.onLine) {
+      setLoading(false);
+      // Try to extract number from QR code for offline mode
+      const extractedNumber = extractNumberFromCode(code);
+      if (extractedNumber) {
+        setParentData({ emergencyNumber: extractedNumber });
+        setChildData({
+          name: "Child Information Unavailable",
+          age: "Unknown",
+          emergencyMessage: "Please contact the parent immediately using the number above."
+        });
+      }
+      return;
+    }
+
     try {
       const response = await scanAPI.scan(code);
       setChildData(response.data.child);
       setParentData(response.data.parent);
     } catch (error) {
       console.error("Scan error:", error);
-      toast.error("Invalid QR code");
+
+      // Try offline fallback
+      const extractedNumber = extractNumberFromCode(code);
+      if (extractedNumber) {
+        setParentData({ emergencyNumber: extractedNumber });
+        setChildData({
+          name: "Child Information Unavailable (Offline Mode)",
+          age: "Unknown",
+          emergencyMessage: "No internet connection. Please contact the parent/guardian using the number below."
+        });
+        toast.warning("No internet connection. Showing offline data.");
+      } else {
+        toast.error("Invalid QR code or no internet connection");
+        setChildData(null);
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  // Extract phone number from QR code
+  const extractNumberFromCode = (qrCode) => {
+    if (!qrCode) return null;
+    // Try to find a phone number pattern in the QR code
+    const phonePattern = /(\+?92|0)?[0-9]{10,13}/g;
+    const matches = qrCode.match(phonePattern);
+    if (matches && matches.length > 0) {
+      let number = matches[0];
+      // Format number for Pakistan
+      if (number.startsWith('0')) {
+        number = '92' + number.substring(1);
+      } else if (!number.startsWith('+')) {
+        number = '+' + number;
+      }
+      return number;
+    }
+    return null;
   };
 
   const handleCall = () => {
@@ -62,7 +127,13 @@ export default function ScanPage() {
       return;
     }
 
-    const phone = parentData.emergencyNumber.replace(/^0/, "92");
+    // Extra check for offline
+    if (!isOnline) {
+      toast.warning("WhatsApp requires internet connection. Please call the parent directly.");
+      return;
+    }
+
+    const phone = parentData.emergencyNumber.replace(/^0/, "92").replace(/^\+/, "");
 
     const message = encodeURIComponent(
       `🚨 EMERGENCY ALERT: Lost Child Found!\n\n` +
@@ -75,48 +146,53 @@ export default function ScanPage() {
     window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
   };
 
-const handleShareLocation = async () => {
-  if (gettingLocation) return;
+  const handleShareLocation = async () => {
+    if (gettingLocation) return;
 
-  if (!navigator.geolocation) {
-    toast.error("Geolocation not supported on this device");
-    return;
-  }
-  
-  const phone = parentData.emergencyNumber.replace(/^0/, "92");
-
-  setGettingLocation(true);
-
-  try {
-    const position = await new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        maximumAge: 0
-      });
-    });
-
-    const { latitude, longitude } = position.coords;
-    const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-
-    const message = encodeURIComponent(
-      `🚨 URGENT: Child Location Shared!\n\n` +
-      `👶 Child: ${childData?.name || "Unknown"}\n` +
-      `📍 Location: ${mapsLink}\n` +
-      `⏰ Time: ${new Date().toLocaleString()}\n\n` +
-      `⚠️ Please come immediately!`
-    );
-
-    window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
-  } catch (error) {
-    if (error.code === 1) {
-      toast.error("Location permission denied");
-    } else {
-      toast.error("Unable to get location");
+    if (!isOnline) {
+      toast.warning("Location sharing requires internet connection");
+      return;
     }
-  } finally {
-    setGettingLocation(false);
-  }
-};
+
+    if (!navigator.geolocation) {
+      toast.error("Geolocation not supported on this device");
+      return;
+    }
+
+    const phone = parentData.emergencyNumber.replace(/^0/, "92");
+
+    setGettingLocation(true);
+
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          maximumAge: 0
+        });
+      });
+
+      const { latitude, longitude } = position.coords;
+      const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+      const message = encodeURIComponent(
+        `🚨 URGENT: Child Location Shared!\n\n` +
+        `👶 Child: ${childData?.name || "Unknown"}\n` +
+        `📍 Location: ${mapsLink}\n` +
+        `⏰ Time: ${new Date().toLocaleString()}\n\n` +
+        `⚠️ Please come immediately!`
+      );
+
+      window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
+    } catch (error) {
+      if (error.code === 1) {
+        toast.error("Location permission denied");
+      } else {
+        toast.error("Unable to get location");
+      }
+    } finally {
+      setGettingLocation(false);
+    }
+  };
 
   const handleCopyNumber = () => {
     if (parentData?.emergencyNumber) {
@@ -165,7 +241,7 @@ const handleShareLocation = async () => {
     );
   }
 
-  if (!childData) {
+  if (!childData && !parentData) {
     return (
       <div className={styles.errorContainer}>
         <FaExclamationTriangle className={styles.errorIcon} />
@@ -181,6 +257,27 @@ const handleShareLocation = async () => {
   return (
     <div className={styles.scanPage}>
       <div className={styles.container}>
+        {/* Offline Banner */}
+        {!isOnline && (
+          <div className={styles.offlineBanner}>
+              <FaPlaneSlash className={styles.offlineIcon} />
+            <div>
+              <strong>Offline Mode</strong>
+              <p>Showing cached information. Some features may be limited.</p>
+            </div>
+          </div>
+        )}
+
+        {isOnline && (
+          <div className={styles.onlineBanner}>
+            <FaWifi className={styles.onlineIcon} />
+            <div>
+              <strong>Online Mode</strong>
+              <p>Full features available</p>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className={styles.header}>
           <div className={styles.badge}>
@@ -196,6 +293,7 @@ const handleShareLocation = async () => {
             <FaPhoneAlt /> Quick Actions
           </div>
           <div className={styles.actionGrid}>
+            {/* Call Button - ALWAYS enabled */}
             <button className={styles.actionCard} onClick={handleCall}>
               <FaPhoneAlt className={styles.actionIconCall} />
               <div>
@@ -204,30 +302,36 @@ const handleShareLocation = async () => {
               </div>
             </button>
 
-            <button className={styles.actionCard} onClick={handleWhatsApp}>
+            {/* WhatsApp Button - Disabled in offline mode */}
+            <button
+              className={styles.actionCard}
+              onClick={handleWhatsApp}
+              disabled={!isOnline}
+            >
               <FaWhatsapp className={styles.actionIconWhatsapp} />
               <div>
                 <h4>WhatsApp</h4>
-                <p>Send message</p>
+                <p>{!isOnline ? "Requires internet" : "Send message"}</p>
               </div>
             </button>
 
+            {/* Location Button - Disabled in offline mode */}
             <button
               className={styles.actionCard}
               onClick={handleShareLocation}
-              disabled={gettingLocation}
+              disabled={gettingLocation || !isOnline}
             >
               <FaLocationArrow className={styles.actionIconLocation} />
               <div>
-                <h4>{gettingLocation ? "Waiting for permission..." : "Share Location"}</h4>
-                <p>Send current location</p>
+                <h4>{gettingLocation ? "Waiting..." : "Share Location"}</h4>
+                <p>{!isOnline ? "Requires internet" : "Send location"}</p>
               </div>
             </button>
           </div>
         </div>
 
-        {/* Home Location Section */}
-        {childData.location?.lat && childData.location?.lon && (
+        {/* Home Location Section - Only show if online and has location */}
+        {isOnline && childData?.location?.lat && childData?.location?.lon && (
           <div className={styles.section}>
             <div className={styles.sectionTitle}>
               <FaMapMarkerAlt /> Home Location
@@ -262,14 +366,19 @@ const handleShareLocation = async () => {
                 <FaChild />
               </div>
               <div className={styles.profileName}>
-                <h2>{childData.name}</h2>
-                <p>Child ID: ...{code?.split("+")[0]?.slice(-6) || "N/A"}</p>
+                <h2>{childData?.name || "Information Unavailable"}</h2>
+                {!isOnline && (
+                  <p className={styles.offlineNote}>⚠️ Offline Mode</p>
+                )}
+                {childData?.name && !childData?.name.includes("Unavailable") && (
+                  <p>Child ID: ...{code?.split("+")[0]?.slice(-6) || "N/A"}</p>
+                )}
               </div>
             </div>
             <div className={styles.profileDetails}>
               <div className={styles.detailRow}>
                 <span>Age:</span>
-                <strong>{childData.age ? `${childData.age} years` : "Not specified"}</strong>
+                <strong>{childData?.age ? `${childData.age} years` : "Not specified"}</strong>
               </div>
               <div className={styles.detailRow}>
                 <span>Scan Time:</span>
@@ -304,29 +413,51 @@ const handleShareLocation = async () => {
                 </div>
               </div>
               <p className={styles.contactNote}>
-                <FaInfoCircle /> Parent will receive email alert with your approximate location and device info
+                <FaInfoCircle />
+                {isOnline
+                  ? "Parent will receive email alert with your approximate location and device info"
+                  : "Please contact the number above immediately. This is an emergency situation."}
               </p>
             </div>
           </div>
         </div>
 
         {/* Emergency Message Section */}
-        {childData.emergencyMessage && (
+        {childData?.emergencyMessage && (
           <div className={styles.section}>
             <div className={styles.sectionTitle}>
               <FaInfoCircle /> Emergency Message
             </div>
             <div className={styles.messageCard}>
-              <div className={styles.messageIconWrapper}>
-              </div>
               <p>{childData.emergencyMessage}</p>
             </div>
           </div>
         )}
+
+        {/* Offline Emergency Instructions */}
+        {!isOnline && !childData?.emergencyMessage && (
+          <div className={styles.section}>
+            <div className={styles.sectionTitle}>
+              <FaInfoCircle /> Emergency Instructions
+            </div>
+            <div className={styles.messageCard}>
+              <p>
+                ⚠️ You are currently offline. Please call the parent/guardian
+                immediately using the number above. If the call doesn't connect,
+                please take the child to the nearest police station or safe location.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Footer Note */}
         <div className={styles.footerNote}>
           <FaShieldAlt />
-          <p>This is a verified SafeChildQR profile. All information is secure and shared only for child safety purposes.</p>
+          <p>
+            {isOnline
+              ? "This is a verified SafeChildQR profile. All information is secure and shared only for child safety purposes."
+              : "You're viewing offline data. Please ensure you contact the parent/guardian as soon as possible."}
+          </p>
         </div>
       </div>
     </div>
