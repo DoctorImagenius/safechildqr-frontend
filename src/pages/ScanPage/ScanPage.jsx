@@ -31,65 +31,115 @@ export default function ScanPage() {
   const [gettingLocation, setGettingLocation] = useState(false);
   const [scanTime, setScanTime] = useState(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  
-  // ✅ New state for location permission
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
   const [savedLocation, setSavedLocation] = useState(null);
 
-  // ✅ Check if location permission already granted
+  // Check existing permission on load
   useEffect(() => {
-    checkExistingPermission();
+    const checkPermission = async () => {
+      if (!navigator.permissions) return;
+      try {
+        const result = await navigator.permissions.query({ name: 'geolocation' });
+        setHasLocationPermission(result.state === 'granted');
+        
+        result.addEventListener('change', () => {
+          setHasLocationPermission(result.state === 'granted');
+          if (result.state !== 'granted') setSavedLocation(null);
+        });
+      } catch (error) {
+        console.error("Permission check error:", error);
+      }
+    };
+    checkPermission();
   }, []);
 
-  const checkExistingPermission = async () => {
-    if (!navigator.permissions) return;
-    
-    try {
-      const result = await navigator.permissions.query({ name: 'geolocation' });
-      if (result.state === 'granted') {
-        setHasLocationPermission(true);
-      }
+  // Get location if permission already granted
+  useEffect(() => {
+    const getLocation = async () => {
+      if (!hasLocationPermission || savedLocation) return;
       
-      // Listen for permission changes
-      result.addEventListener('change', () => {
-        if (result.state === 'granted') {
-          setHasLocationPermission(true);
-        } else if (result.state === 'denied') {
-          setHasLocationPermission(false);
-          setSavedLocation(null);
-        }
-      });
-    } catch (error) {
-      console.error("Permission check error:", error);
+      setGettingLocation(true);
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000
+          });
+        });
+        setSavedLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          mapsLink: `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`
+        });
+      } catch (error) {
+        if (error.code === 1) setHasLocationPermission(false);
+      } finally {
+        setGettingLocation(false);
+      }
+    };
+    getLocation();
+  }, [hasLocationPermission, savedLocation]);
+
+  useEffect(() => {
+    setScanTime(new Date().toLocaleString());
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    fetchScanData();
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+    // eslint-disable-next-line
+  }, [code]);
+
+  const sendLocationToWhatsApp = (location) => {
+    const phone = parentData.emergencyNumber.replace(/^0/, "92");
+    const message = encodeURIComponent(
+      `🚨 URGENT: Child Location Shared!\n\n` +
+      `👶 Child: ${childData?.name || "Unknown"}\n` +
+      `📍 Location: ${location.mapsLink}\n` +
+      `⏰ Time: ${new Date().toLocaleString()}\n\n` +
+      `⚠️ Please come immediately!`
+    );
+    const whatsappUrl = `https://wa.me/${phone}?text=${message}`;
+    const newWindow = window.open(whatsappUrl, "_blank");
+    
+    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+      toast.info(
+        <div>
+          Popup blocked! 
+          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">Click here to open WhatsApp</a>
+        </div>
+      );
+    } else {
+      toast.success("Opening WhatsApp...");
     }
   };
 
-  // ✅ Main function - handles both permission and sharing
   const handleShareLocation = async () => {
     if (!isOnline) {
       toast.warning("Internet connection required");
       return;
     }
-
     if (!parentData?.emergencyNumber) {
       toast.error("Emergency number not available");
       return;
     }
-
     if (!navigator.geolocation) {
       toast.error("Geolocation is not supported");
       return;
     }
 
-    // Case 1: Permission already granted and location saved
+    // Already have permission and location
     if (hasLocationPermission && savedLocation) {
       sendLocationToWhatsApp(savedLocation);
       return;
     }
 
-    // Case 2: Need to get permission and location
+    // Need to get permission and location
     setGettingLocation(true);
-    
     try {
       const position = await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
@@ -97,20 +147,14 @@ export default function ScanPage() {
           timeout: 30000
         });
       });
-
       const locationData = {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
         mapsLink: `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`
       };
-
-      // Save location and permission status
       setSavedLocation(locationData);
       setHasLocationPermission(true);
-      
-      // Send to WhatsApp immediately
       sendLocationToWhatsApp(locationData);
-      
     } catch (error) {
       if (error.code === 1) {
         toast.error("Location access denied. Please allow location and try again.");
@@ -127,38 +171,6 @@ export default function ScanPage() {
     }
   };
 
-  // ✅ Function to send location on WhatsApp
-  const sendLocationToWhatsApp = (location) => {
-    const phone = parentData.emergencyNumber.replace(/^0/, "92");
-    const message = encodeURIComponent(
-      `🚨 URGENT: Child Location Shared!\n\n` +
-      `👶 Child: ${childData?.name || "Unknown"}\n` +
-      `📍 Location: ${location.mapsLink}\n` +
-      `⏰ Time: ${new Date().toLocaleString()}\n\n` +
-      `⚠️ Please come immediately!`
-    );
-
-    const whatsappUrl = `https://wa.me/${phone}?text=${message}`;
-    
-    // Try to open WhatsApp
-    const newWindow = window.open(whatsappUrl, "_blank");
-    
-    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-      // Popup blocked, show alternative
-      toast.info(
-        <div>
-          Popup blocked! 
-          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-            Click here to open WhatsApp
-          </a>
-        </div>
-      );
-    } else {
-      toast.success("Opening WhatsApp...");
-    }
-  };
-
-  // Rest of your existing functions (handleCall, handleWhatsApp, etc.) remain SAME
   const handleCall = () => {
     if (parentData?.emergencyNumber) {
       window.location.href = `tel:${parentData.emergencyNumber}`;
@@ -172,14 +184,11 @@ export default function ScanPage() {
       toast.error("Emergency number not available");
       return;
     }
-
     if (!isOnline) {
       toast.warning("WhatsApp requires internet connection. Please call the parent directly.");
       return;
     }
-
     const phone = parentData.emergencyNumber.replace(/^0/, "92").replace(/^\+/, "");
-
     const message = encodeURIComponent(
       `🚨 EMERGENCY ALERT: Lost Child Found!\n\n` +
       `👶 Child Name: ${childData?.name || "Unknown"}\n` +
@@ -187,25 +196,22 @@ export default function ScanPage() {
       `⏰ Time: ${new Date().toLocaleString()}\n\n` +
       `⚠️ Please respond immediately!`
     );
-
     window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
   };
 
   const handleCopyNumber = () => {
-    if (parentData?.emergencyNumber) {
-      const phoneNumber = parentData.emergencyNumber;
-
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(phoneNumber)
-          .then(() => {
-            setCopied(true);
-            toast.success("Emergency number copied!");
-            setTimeout(() => setCopied(false), 2000);
-          })
-          .catch(() => fallbackCopy(phoneNumber));
-      } else {
-        fallbackCopy(phoneNumber);
-      }
+    if (!parentData?.emergencyNumber) return;
+    const phoneNumber = parentData.emergencyNumber;
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(phoneNumber)
+        .then(() => {
+          setCopied(true);
+          toast.success("Emergency number copied!");
+          setTimeout(() => setCopied(false), 2000);
+        })
+        .catch(() => fallbackCopy(phoneNumber));
+    } else {
+      fallbackCopy(phoneNumber);
     }
   };
 
@@ -227,25 +233,6 @@ export default function ScanPage() {
     }
     document.body.removeChild(textarea);
   };
-
-  // Keep all your existing useEffect and fetchScanData functions
-  useEffect(() => {
-    setScanTime(new Date().toLocaleString());
-
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    fetchScanData();
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-    // eslint-disable-next-line
-  }, [code]);
 
   const fetchScanData = async () => {
     if (!navigator.onLine) {
@@ -302,7 +289,6 @@ export default function ScanPage() {
     return null;
   };
 
-  // Loading and error screens remain SAME
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -329,7 +315,6 @@ export default function ScanPage() {
   return (
     <div className={styles.scanPage}>
       <div className={styles.container}>
-        {/* Offline Banner */}
         {!isOnline && (
           <div className={styles.offlineBanner}>
             <FaPlaneSlash className={styles.offlineIcon} />
@@ -350,7 +335,6 @@ export default function ScanPage() {
           </div>
         )}
 
-        {/* Header */}
         <div className={styles.header}>
           <div className={styles.badge}>
             <FaShieldAlt /> Verified Child Safety QR
@@ -359,13 +343,11 @@ export default function ScanPage() {
           <p>Scan verified - Please help reunite this child with their family</p>
         </div>
 
-        {/* Quick Actions */}
         <div className={styles.section}>
           <div className={styles.sectionTitle}>
             <FaPhoneAlt /> Quick Actions
           </div>
           <div className={styles.actionGrid}>
-            {/* Call Button */}
             <button className={styles.actionCard} onClick={handleCall}>
               <FaPhoneAlt className={styles.actionIconCall} />
               <div>
@@ -374,12 +356,7 @@ export default function ScanPage() {
               </div>
             </button>
 
-            {/* WhatsApp Button */}
-            <button
-              className={styles.actionCard}
-              onClick={handleWhatsApp}
-              disabled={!isOnline}
-            >
+            <button className={styles.actionCard} onClick={handleWhatsApp} disabled={!isOnline}>
               <FaWhatsapp className={styles.actionIconWhatsapp} />
               <div>
                 <h4>WhatsApp</h4>
@@ -387,17 +364,12 @@ export default function ScanPage() {
               </div>
             </button>
 
-            {/* ✅ SMART LOCATION BUTTON - Text changes based on state */}
-            <button
-              className={styles.actionCard}
-              onClick={handleShareLocation}
-              disabled={gettingLocation || !isOnline}
-            >
+            <button className={styles.actionCard} onClick={handleShareLocation} disabled={gettingLocation || !isOnline}>
               <FaLocationArrow className={styles.actionIconLocation} />
               <div>
                 <h4>
-                  {gettingLocation 
-                    ? "Getting location..." 
+                  {gettingLocation
+                    ? "Getting location..."
                     : hasLocationPermission && savedLocation
                       ? "Send Location Now"
                       : "Share Location"}
@@ -407,17 +379,13 @@ export default function ScanPage() {
                     ? "Requires internet"
                     : hasLocationPermission && savedLocation
                       ? "Send current location via WhatsApp"
-                      : hasLocationPermission && !savedLocation
-                        ? "Getting location..."
-                        : "Allow location access"}
+                      : "Allow location access"}
                 </p>
               </div>
             </button>
           </div>
         </div>
 
-        {/* Rest of your JSX remains EXACTLY SAME from here */}
-        {/* Home Location Section */}
         {isOnline && childData?.location?.lat && childData?.location?.lon && (
           <div className={styles.section}>
             <div className={styles.sectionTitle}>
@@ -429,12 +397,7 @@ export default function ScanPage() {
                   <span>Latitude: {childData.location.lat}</span>
                   <span>Longitude: {childData.location.lon}</span>
                 </div>
-                <a
-                  href={`https://www.google.com/maps?q=${childData.location.lat},${childData.location.lon}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.mapLink}
-                >
+                <a href={`https://www.google.com/maps?q=${childData.location.lat},${childData.location.lon}`} target="_blank" rel="noopener noreferrer" className={styles.mapLink}>
                   <FaGlobe /> Open in Google Maps
                 </a>
               </div>
@@ -442,7 +405,6 @@ export default function ScanPage() {
           </div>
         )}
 
-        {/* Child Profile Section */}
         <div className={styles.section}>
           <div className={styles.sectionTitle}>
             <FaChild /> Child Information
@@ -454,9 +416,7 @@ export default function ScanPage() {
               </div>
               <div className={styles.profileName}>
                 <h2>{childData?.name || "Information Unavailable"}</h2>
-                {!isOnline && (
-                  <p className={styles.offlineNote}>⚠️ Offline Mode</p>
-                )}
+                {!isOnline && <p className={styles.offlineNote}>⚠️ Offline Mode</p>}
                 {childData?.name && !childData?.name.includes("Unavailable") && (
                   <p>Child ID: ...{code?.split("+")[0]?.slice(-6) || "N/A"}</p>
                 )}
@@ -479,7 +439,6 @@ export default function ScanPage() {
           </div>
         </div>
 
-        {/* Parent Contact Section */}
         <div className={styles.section}>
           <div className={styles.sectionTitle}>
             <FaUserFriends /> Parent Contact
@@ -509,7 +468,6 @@ export default function ScanPage() {
           </div>
         </div>
 
-        {/* Emergency Message Section */}
         {childData?.emergencyMessage && (
           <div className={styles.section}>
             <div className={styles.sectionTitle}>
@@ -521,7 +479,6 @@ export default function ScanPage() {
           </div>
         )}
 
-        {/* Offline Emergency Instructions */}
         {!isOnline && !childData?.emergencyMessage && (
           <div className={styles.section}>
             <div className={styles.sectionTitle}>
@@ -537,7 +494,6 @@ export default function ScanPage() {
           </div>
         )}
 
-        {/* Footer Note */}
         <div className={styles.footerNote}>
           <FaShieldAlt />
           <p>
