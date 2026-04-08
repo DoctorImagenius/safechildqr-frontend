@@ -33,7 +33,6 @@ export default function ScanPage() {
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
   const [savedLocation, setSavedLocation] = useState(null);
 
-  // Check existing permission on load
   useEffect(() => {
     const checkPermission = async () => {
       if (!navigator.permissions) return;
@@ -46,13 +45,12 @@ export default function ScanPage() {
           if (result.state !== 'granted') setSavedLocation(null);
         });
       } catch (error) {
-        console.error("Permission check error:", error);
+        console.warn("Error checking geolocation permission");
       }
     };
     checkPermission();
   }, []);
 
-  // Get location if permission already granted
   useEffect(() => {
     const getLocation = async () => {
       if (!hasLocationPermission || savedLocation) return;
@@ -127,19 +125,17 @@ export default function ScanPage() {
       return;
     }
 
-    // Already have permission and location
     if (hasLocationPermission && savedLocation) {
       sendLocationToWhatsApp(savedLocation);
       return;
     }
 
-    // Need to get permission and location
     setGettingLocation(true);
     try {
       const position = await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: true,
-          timeout: 30000
+          timeout: 10000
         });
       });
       const locationData = {
@@ -231,36 +227,30 @@ export default function ScanPage() {
 
   const extractNumberFromCode = (qrCode) => {
     if (!qrCode) return null;
-    const phonePattern = /(\+?92|0)?[0-9]{10,13}/g;
-    const matches = qrCode.match(phonePattern);
-    if (matches && matches.length > 0) {
-      let number = matches[0];
-      // Convert 92xxxxx to 0xxxxxx for display
-      if (number.startsWith('92')) {
-        number = '0' + number.substring(2);
-      }
-      return number; // Returns like 03123456789
+    try {
+      return qrCode.split('+').pop();
     }
-    return null;
+    catch (err) {
+      return null;
+    }
   };
 
   const fetchScanData = async () => {
-    if (!navigator.onLine) {
-      setLoading(false);
-      const extractedNumber = extractNumberFromCode(code);
-      if (extractedNumber) {
-        setParentData({ emergencyNumber: extractedNumber });
-        setChildData({
-          name: "Child Information Unavailable",
-          age: "Unknown",
-          emergencyMessage: "Please contact the parent immediately using the number above."
-        });
-        toast.warning("No internet connection. Showing offline data.");
-      }
-      return;
-    }
-
     try {
+      if (!navigator.onLine) {
+        const extractedNumber = extractNumberFromCode(code);
+        if (extractedNumber) {
+          setParentData({ emergencyNumber: extractedNumber });
+          setChildData({
+            name: "Child Information Unavailable",
+            age: "Unknown",
+            emergencyMessage: "Please contact the parent immediately using the number above."
+          });
+          toast.warning("No internet connection. Showing offline data.");
+        }
+        setLoading(false);
+        return;
+      }
       const response = await scanAPI.scan(code);
       setChildData(response.data.child);
       setParentData(response.data.parent);
