@@ -3,24 +3,23 @@ import { useParams, useNavigate } from "react-router-dom";
 import { childAPI } from "../../services/api";
 import { toast } from "react-toastify";
 import {
-  FaChild, FaEdit, FaTrash, FaArrowLeft, FaSave,
-  FaTimes, FaMapMarkerAlt, FaLocationArrow, FaExternalLinkAlt,
-  FaQrcode, FaDownload
+  FaEdit, FaTrash, FaArrowLeft, FaSave,
+  FaMapMarkerAlt, FaExternalLinkAlt
 } from "react-icons/fa";
-import QRCode from "react-qrcode-logo";
 import styles from "./ChildDetails.module.css";
 import { AuthContext } from "../../context/AuthContext";
-
+import ChildProfileHeader from "../../components/ChildProfileHeader/ChildProfileHeader";
+import QRCodeSection from "../../components/QRCodeSection/QRCodeSection";
+import LocationPicker from "../../components/LocationPicker/LocationPicker";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 export default function ChildDetails() {
-
   const { user } = useContext(AuthContext);
   const { id } = useParams();
   const navigate = useNavigate();
   const [child, setChild] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [gettingLocation, setGettingLocation] = useState(false);
   const [qrValue, setQrValue] = useState("");
   const [formData, setFormData] = useState({
     name: "",
@@ -52,57 +51,6 @@ export default function ChildDetails() {
     } finally {
       setLoading(false);
     }
-  };
-
-
-  const downloadQRCode = () => {
-    const canvas = document.getElementById("qr-code-canvas");
-    if (canvas) {
-      const pngUrl = canvas
-        .toDataURL("image/png")
-        .replace("image/png", "image/octet-stream");
-      const downloadLink = document.createElement("a");
-      downloadLink.href = pngUrl;
-      downloadLink.download = `${child?.name || "child"}_SafeChildQR.png`;
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-      toast.success("QR Code downloaded successfully!");
-    } else {
-      toast.error("Failed to generate QR code");
-    }
-  };
-
-  const getCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      toast.error("Geolocation not supported");
-      return;
-    }
-
-    setGettingLocation(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const newLocation = {
-          lat: position.coords.latitude,
-          lon: position.coords.longitude
-        };
-        setFormData({
-          ...formData,
-          location: newLocation
-        });
-        toast.success("Location captured! You can now save it.");
-        setGettingLocation(false);
-      },
-      (error) => {
-        let msg = "Failed to get location";
-        if (error.code === 1) msg = "Please allow location access";
-        if (error.code === 2) msg = "Location unavailable";
-        if (error.code === 3) msg = "Location timeout";
-        toast.error(msg);
-        setGettingLocation(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
   };
 
   const handleSubmit = async (e) => {
@@ -147,8 +95,7 @@ export default function ChildDetails() {
         navigate("/dashboard");
       } catch (error) {
         toast.error("Delete failed");
-      }
-      finally {
+      } finally {
         setLoading(false);
       }
     }
@@ -158,7 +105,10 @@ export default function ChildDetails() {
     window.open(`https://www.google.com/maps?q=${lat},${lon}`, "_blank");
   };
 
-  if (loading) return <div className={styles.loading}>Loading...</div>;
+ if (loading) {
+    return <LoadingSpinner message="Loading child..." />;
+  }
+  
   if (!child) return <div className={styles.loading}>Not found</div>;
 
   return (
@@ -184,15 +134,7 @@ export default function ChildDetails() {
         {!isEditing ? (
           /* View Mode */
           <div className={styles.viewMode}>
-            <div className={styles.profile}>
-              <div className={styles.avatar}>
-                <FaChild />
-              </div>
-              <div>
-                <h1>{child.name}</h1>
-                {child.age && <p>Age: {child.age} years</p>}
-              </div>
-            </div>
+            <ChildProfileHeader child={child} />
 
             <div className={styles.infoBox}>
               <h3>Emergency Message</h3>
@@ -215,37 +157,7 @@ export default function ChildDetails() {
               </div>
             )}
 
-            <div className={styles.infoBox}>
-              <h3><FaQrcode /> QR Code</h3>
-              <div className={styles.qrContainer}>
-                <div className={styles.qrCodeWrapper}>
-                  <QRCode
-                    id="qr-code-canvas"
-                    value={qrValue}
-                    size={180}
-                    bgColor="#ffffff"
-                    fgColor="#000000"
-                    level="H"
-                    includeMargin={true}
-                  />
-                </div>
-                <div className={styles.qrInfo}>
-                  <p className={styles.qrText}>
-                    <strong>Scan Code:</strong> {qrValue}
-                  </p>
-                  <p className={styles.qrHint}>
-                    This QR code contains: <strong>Child ID + Emergency Number</strong>
-                  </p>
-
-                  <button
-                    className={styles.downloadQrBtn}
-                    onClick={downloadQRCode}
-                  >
-                    <FaDownload /> Download QR Code
-                  </button>
-                </div>
-              </div>
-            </div>
+            <QRCodeSection qrValue={qrValue} childName={child.name} />
           </div>
         ) : (
           /* Edit Mode */
@@ -287,42 +199,13 @@ export default function ChildDetails() {
 
             <div className={styles.field}>
               <label><FaMapMarkerAlt /> Location <span>(Optional)</span></label>
-              <div className={styles.locationWarning}>
-                ⚠️ Location is sensitive information - share only if necessary for child's safety
-              </div>
-
-              {formData.location?.lat && formData.location?.lon ? (
-                <div className={styles.locationPreview}>
-                  <p><strong>Latitude:</strong> {formData.location.lat}</p>
-                  <p><strong>Longitude:</strong> {formData.location.lon}</p>
-                  <button
-                    type="button"
-                    className={styles.testMapBtn}
-                    onClick={() => openGoogleMaps(formData.location.lat, formData.location.lon)}
-                  >
-                    Test Location on Maps
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.clearLocationBtn}
-                    onClick={() => setFormData({ ...formData, location: { lat: null, lon: null } })}
-                  >
-                    <FaTimes /> Clear Location
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  className={styles.locationBtn}
-                  onClick={getCurrentLocation}
-                  disabled={gettingLocation}
-                >
-                  <FaLocationArrow /> {gettingLocation ? "Getting Location..." : "Get Current Location"}
-                </button>
-              )}
-              <small className={styles.locationHint}>
-                This will help finders locate your child's home more easily
-              </small>
+              <LocationPicker
+                location={formData.location}
+                onLocationChange={(newLocation) => 
+                  setFormData({ ...formData, location: newLocation })
+                }
+                showWarning={true}
+              />
             </div>
 
             <div className={styles.formActions}>

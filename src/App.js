@@ -12,12 +12,13 @@ import ChildDetails from "./pages/ChildDetails/ChildDetails";
 import Header from "./components/Header/Header";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import LoadingSpinner from "./components/LoadingSpinner/LoadingSpinner";
 
 function App() {
   const { token, loading } = useContext(AuthContext);
 
   if (loading) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
+    return <LoadingSpinner message="Loading..." />;
   }
 
   return (

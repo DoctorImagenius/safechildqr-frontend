@@ -92,37 +92,6 @@
   animation: fadeIn 0.3s ease;
 }
 
-.profile {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.avatar {
-  width: 70px;
-  height: 70px;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-  color: white;
-}
-
-.profile h1 {
-  font-size: 24px;
-  color: #0f172a;
-  margin-bottom: 4px;
-}
-
-.profile p {
-  color: #64748b;
-}
-
 .infoBox {
   background: #f8fafc;
   border-radius: 12px;
@@ -145,22 +114,33 @@
   margin-bottom: 8px;
 }
 
-.qrText {
-  font-family: monospace;
-  font-size: 12px;
-  word-break: break-all;
+.locationDisplay {
+  margin-top: 8px;
 }
 
-.mapLink {
-  display: inline-block;
-  margin-top: 8px;
-  color: #f59e0b;
-  text-decoration: none;
+.locationDisplay p {
+  margin-bottom: 8px;
   font-size: 14px;
 }
 
-.mapLink:hover {
-  text-decoration: underline;
+.mapButton {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  margin-top: 8px;
+  transition: all 0.3s;
+}
+
+.mapButton:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
 }
 
 /* Edit Mode */
@@ -206,10 +186,6 @@
   border-color: #f59e0b;
 }
 
-.locationBox {
-  margin-top: 6px;
-}
-
 .formActions {
   display: flex;
   gap: 12px;
@@ -246,174 +222,6 @@
   background: #d97706;
 }
 
-.locationDisplay {
-  margin-top: 8px;
-}
-
-.locationDisplay p {
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-.mapButton {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  margin-top: 8px;
-  transition: all 0.3s;
-}
-
-.mapButton:hover {
-  background: #2563eb;
-  transform: translateY(-1px);
-}
-
-.locationWarning {
-  background: #fef3c7;
-  border-left: 3px solid #f59e0b;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  color: #92400e;
-  margin-bottom: 12px;
-}
-
-.locationPreview {
-  background: #f1f5f9;
-  padding: 12px;
-  border-radius: 8px;
-  margin-top: 8px;
-}
-
-.locationPreview p {
-  font-size: 13px;
-  margin-bottom: 8px;
-  color: #334155;
-}
-
-.testMapBtn {
-  background: #10b981;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  margin-right: 8px;
-  margin-bottom: 8px;
-}
-
-.testMapBtn:hover {
-  background: #059669;
-}
-
-.clearLocationBtn {
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.locationBtn {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  width: 100%;
-  justify-content: center;
-}
-
-.locationBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.locationHint{
-  display: block;
-  margin-top: 6px;
-  font-size: 12px;
-  color: #67778d;
-}
-
-.qrHint {
-  font-size: 12px;
-  color: #64748b;
-  margin-top: 8px;
-}
-
-.qrContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-.qrCodeWrapper {
-  background: white;
-  padding: 15px;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  display: inline-block;
-}
-
-.qrInfo {
-  width: 100%;
-  text-align: center;
-}
-
-.qrText {
-  font-family: monospace;
-  font-size: 12px;
-  word-break: break-all;
-  background: #f1f5f9;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-}
-
-
-.downloadQrBtn {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 10px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  margin-top: 15px;
-  transition: all 0.3s;
-  width: 100%;
-  justify-content: center;
-}
-
-.downloadQrBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -425,27 +233,13 @@
   }
 }
 
-
 @media (max-width: 640px) {
-  .qrCodeWrapper {
-    padding: 10px;
-  }
-  
-  .qrCodeWrapper canvas {
-    width: 150px !important;
-    height: 150px !important;
-  }
-  
-  .downloadQrBtn {
-    padding: 10px 20px;
-    font-size: 13px;
-  }
-
-  .container{
+  .container {
     padding: 20px;
     padding-bottom: 100px;
   }
+  
+  .card {
+    padding: 20px;
+  }
 }
-
-
-

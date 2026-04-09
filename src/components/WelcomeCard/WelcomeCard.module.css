@@ -1,0 +1,64 @@
+.welcomeCard {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 16px;
+  padding: 24px 32px;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.welcomeContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.welcomeContent h2 {
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
+.welcomeContent p {
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.welcomeName{
+  color: #f59e0b;
+}
+
+.emergencyBadge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.emergencyBadge svg {
+  color: #f59e0b;
+}
+
+@media (max-width: 768px) {
+  .welcomeCard {
+    padding: 20px;
+  }
+  
+  .welcomeContent {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .welcomeContent h2 {
+    font-size: 20px;
+  }
+
+  .emergencyBadge {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,85 @@
+.locationField {
+  margin-top: 6px;
+}
+
+.locationWarning {
+  background: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #92400e;
+  margin-bottom: 12px;
+}
+
+.locationPreview {
+  background: #f1f5f9;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.locationPreview p {
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: #334155;
+}
+
+.testMapBtn {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.testMapBtn:hover {
+  background: #059669;
+}
+
+.clearLocationBtn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.locationBtn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  width: 100%;
+  justify-content: center;
+}
+
+.locationBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.locationHint {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #67778d;
+}

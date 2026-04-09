@@ -1,0 +1,119 @@
+.settingsCard {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+}
+
+.dangerCard {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.cardIcon {
+  font-size: 24px;
+  color: #f59e0b;
+}
+
+.cardHeader h3 {
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.dangerText {
+  color: #dc2626;
+  font-size: 14px;
+  margin-bottom: 20px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+}
+
+.deleteAccountBtn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.deleteAccountBtn:hover {
+  background: #b91c1c;
+  transform: translateY(-2px);
+}
+
+.confirmBox {
+  background: white;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #fecaca;
+}
+
+.confirmBox p {
+  color: #dc2626;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 12px;
+}
+
+.confirmDelete {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.confirmDelete:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.confirmDelete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancelDelete {
+  background: #e2e8f0;
+  color: #0f172a;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.cancelDelete:hover {
+  background: #cbd5e1;
+}
+
+@media (max-width: 640px) {
+  .settingsCard {
+    padding: 20px;
+  }
+  
+  .confirmActions {
+    flex-direction: column;
+  }
+}

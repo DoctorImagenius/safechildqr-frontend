@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { scanAPI } from "../../services/api";
 import { toast } from "react-toastify";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import {
   FaChild,
   FaPhoneAlt,
@@ -264,13 +265,7 @@ export default function ScanPage() {
   };
 
   if (loading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.loadingSpinner}></div>
-        <p>Loading child information...</p>
-        <p className={styles.loadingSub}>Please wait while we fetch details</p>
-      </div>
-    );
+    return <LoadingSpinner message="Loading Child Data..." />;
   }
 
   if (!childData && !parentData) {
@@ -312,7 +307,7 @@ export default function ScanPage() {
             <FaPhoneAlt /> Quick Actions
           </div>
           <div className={styles.actionGrid}>
-          
+
             <button className={styles.actionCard} onClick={handleCall}>
               <FaPhoneAlt className={styles.actionIconCall} />
               <div>

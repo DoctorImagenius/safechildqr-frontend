@@ -1,0 +1,187 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modalHeader h3 {
+  font-size: 20px;
+  color: #0f172a;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.modalContent form {
+  padding: 24px;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.formGroup label span {
+  color: #64748b;
+  font-weight: normal;
+  font-size: 12px;
+}
+
+.formGroup input,
+.formGroup textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: #f59e0b;
+}
+
+.submitBtn {
+  width: 100%;
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.submitBtn:hover {
+  background: #d97706;
+}
+
+.locationWarning {
+  background: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #92400e;
+  margin-bottom: 12px;
+}
+
+.locationPreview {
+  background: #f1f5f9;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.locationPreview p {
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #334155;
+}
+
+.mapPreviewLink {
+  display: inline-block;
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 13px;
+  margin: 8px 0;
+}
+
+.mapPreviewLink:hover {
+  text-decoration: underline;
+}
+
+.clearLocationBtn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.locationBtn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  width: 100%;
+  justify-content: center;
+}
+
+.locationBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.locationHint {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+@media (max-width: 500px) {
+  .modalContent {
+    margin: 16px;
+    max-height: 85vh;
+  }
+
+  .modalContent form {
+    padding: 16px;
+  }
+}

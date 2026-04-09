@@ -11,7 +11,7 @@ const Header = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/", { replace: true }); // Use replace to clear history
+    navigate("/", { replace: true });
   };
 
   return (

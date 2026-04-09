@@ -2,7 +2,9 @@ import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { parentAPI } from "../../services/api";
 import { toast } from "react-toastify";
-import { FaUser, FaPhone, FaLock, FaSave, FaTrash, FaSignOutAlt } from "react-icons/fa";
+import { FaPhone, FaLock, FaSave, FaSignOutAlt } from "react-icons/fa";
+import ProfileInfoCard from "../../components/ProfileInfoCard/ProfileInfoCard";
+import DangerZone from "../../components/DangerZone/DangerZone";
 import styles from "./Settings.module.css";
 
 export default function Settings() {
@@ -13,7 +15,6 @@ export default function Settings() {
     confirmPassword: ""
   });
   const [loading, setLoading] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -68,18 +69,8 @@ export default function Settings() {
     }
   };
 
-  const handleDeleteAccount = async () => {
-    setLoading(true);
-    try {
-      await parentAPI.deleteAccount();
-      toast.success("Account deleted successfully");
-      logout();
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to delete account");
-    } finally {
-      setLoading(false);
-      setShowDeleteConfirm(false);
-    }
+  const handleDeleteSuccess = () => {
+    logout();
   };
 
   return (
@@ -91,18 +82,8 @@ export default function Settings() {
         </div>
 
         <div className={styles.settingsGrid}>
-          {/* Profile Settings */}
-          <div className={styles.settingsCard}>
-            <div className={styles.cardHeader}>
-              <FaUser className={styles.cardIcon} />
-              <h3>Profile Information</h3>
-            </div>
-            <div className={styles.infoRow}>
-              <span>Email:</span>
-              <strong>{user?.email}</strong>
-            </div>
-            <p className={styles.infoNote}>Email cannot be changed</p>
-          </div>
+          {/* Profile Information Card */}
+          <ProfileInfoCard user={user} />
 
           {/* Update Form */}
           <div className={styles.settingsCard}>
@@ -112,9 +93,9 @@ export default function Settings() {
             </div>
             <form onSubmit={handleUpdate} className={styles.updateForm}>
               <div className={styles.formGroup}>
-                 <div className={styles.locationWarning}>
+                <div className={styles.locationWarning}>
                 ⚠️ If you change your Number, every QR Code will be changed.
-              </div>
+                </div>
                 <label>
                   <FaPhone /> Emergency Number
                 </label>
@@ -126,7 +107,6 @@ export default function Settings() {
                   onChange={handleChange}
                 />
                 <small>Pakistani mobile number (03XXXXXXXXX)</small>
-                
               </div>
 
               <div className={styles.formGroup}>
@@ -164,44 +144,7 @@ export default function Settings() {
           </div>
 
           {/* Danger Zone */}
-          <div className={`${styles.settingsCard} ${styles.dangerCard}`}>
-            <div className={styles.cardHeader}>
-              <FaTrash className={styles.cardIcon} />
-              <h3>Danger Zone</h3>
-            </div>
-            <p className={styles.dangerText}>
-              Once you delete your account, all your children's data will be permanently deleted.
-              This action cannot be undone.
-            </p>
-            
-            {!showDeleteConfirm ? (
-              <button 
-                className={styles.deleteAccountBtn}
-                onClick={() => setShowDeleteConfirm(true)}
-              >
-                <FaTrash /> Delete Account
-              </button>
-            ) : (
-              <div className={styles.confirmBox}>
-                <p>Are you absolutely sure?</p>
-                <div className={styles.confirmActions}>
-                  <button 
-                    className={styles.confirmDelete}
-                    onClick={handleDeleteAccount}
-                    disabled={loading}
-                  >
-                    Yes, Delete My Account
-                  </button>
-                  <button 
-                    className={styles.cancelDelete}
-                    onClick={() => setShowDeleteConfirm(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+          <DangerZone onDeleteSuccess={handleDeleteSuccess} />
 
           {/* Logout */}
           <div className={styles.settingsCard}>
