@@ -285,11 +285,6 @@
   transform: scale(0.97);
 }
 
-.actionCard:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 .actionIconCall {
   font-size: 28px;
   color: #f59e0b;
@@ -569,8 +564,6 @@
 
 .actionCard.locationReady {
   background: linear-gradient(135deg, #dcfce7, #acffc9);
-  /* background: #dcfce7; */
-
   transform: translateY(-2px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

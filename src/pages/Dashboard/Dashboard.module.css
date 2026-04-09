@@ -105,7 +105,7 @@
   transform: translateY(-1px);
 }
 
-/* Table Styles */
+/* Table Styles - Default for desktop */
 .tableWrapper {
   overflow-x: auto;
 }
@@ -161,15 +161,11 @@
 
 .viewBtn {
   background: none;
-  border: 1px dashed #f59e0b;
+  border: 1px solid #f59e0b;
   color: #f59e0b;
   cursor: pointer;
   display: flex;
-  align-self: flex-end;
-
-
-
-  /* align-items: center; */
+  align-items: center;
   gap: 6px;
   font-size: 14px;
   padding: 6px 12px;
@@ -193,7 +189,7 @@
   margin-bottom: 16px;
 }
 
-.childBlackIcon{
+.childBlackIcon {
   color: #0f172a;
 }
 
@@ -210,6 +206,118 @@
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
+}
+
+/* Card View for Mobile - Hidden by default */
+.childrenCards {
+  display: none;
+  padding: 16px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.childCard {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+  border: 1px solid #e2e8f0;
+}
+
+.childCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f59e0b;
+}
+
+.childName {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.childName svg {
+  color: #f59e0b;
+  font-size: 20px;
+}
+
+.childName h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.childAge {
+  background: #f1f5f9;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.cardBody {
+  margin-bottom: 16px;
+}
+
+.messageSection {
+  background: #fff8dd;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.messageLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #92400e;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.messageText {
+  font-size: 14px;
+  color: #78350f;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.viewCardBtn {
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.viewCardBtn:hover {
+  background: #d97706;
+  transform: translateY(-1px);
 }
 
 /* Modal */
@@ -232,6 +340,8 @@
   border-radius: 16px;
   max-width: 500px;
   width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modalHeader {
@@ -386,8 +496,7 @@
   color: #64748b;
 }
 
-
-/* Responsive */
+/* Responsive Design */
 @media (max-width: 768px) {
   .container {
     padding: 0 16px;
@@ -399,27 +508,82 @@
     align-items: flex-start;
   }
 
-  .table th,
-  .table td {
-    padding: 12px;
+  .welcomeContent h2 {
+    font-size: 20px;
   }
 
-  .messageCell {
-    max-width: 150px;
+  .emergencyBadge {
+    width: 100%;
+    justify-content: center;
   }
 
+  /* Hide table on mobile */
+  .tableWrapper {
+    display: none;
+  }
+
+  /* Show cards on mobile */
+  .childrenCards {
+    display: flex;
+  }
+
+  .tableHeader {
+    padding: 16px;
+  }
+
+  .tableHeader h3 {
+    font-size: 16px;
+  }
+
+  .addBtn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 500px) {
-
   .tableHeader {
-    display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 20px;
+    gap: 12px;
   }
 
-  .childIcon{
-    display: none;
+  .addBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .modalContent {
+    margin: 16px;
+    max-height: 85vh;
+  }
+
+  .modalContent form {
+    padding: 16px;
+  }
+
+  .childName h4 {
+    font-size: 16px;
+  }
+
+  .messageText {
+    font-size: 13px;
+  }
+}
+
+/* For very small devices */
+@media (max-width: 380px) {
+  .cardHeader {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .childAge {
+    align-self: flex-start;
+  }
+
+  .viewCardBtn {
+    padding: 8px 16px;
+    font-size: 13px;
   }
 }

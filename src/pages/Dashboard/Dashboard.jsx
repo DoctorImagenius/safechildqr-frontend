@@ -70,7 +70,7 @@ export default function Dashboard() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.name) {
       toast.error("Name is required");
       return;
@@ -86,19 +86,19 @@ export default function Dashboard() {
         name: formData.name,
         emergencyMessage: formData.emergencyMessage,
       };
-      
+
       if (formData.age) submitData.age = parseInt(formData.age);
       if (formData.location.lat && formData.location.lon) {
         submitData.location = formData.location;
       }
-      
+
       await childAPI.add(submitData);
       toast.success("Child added successfully");
       fetchChildren();
       setShowModal(false);
-      setFormData({ 
-        name: "", 
-        age: "", 
+      setFormData({
+        name: "",
+        age: "",
         emergencyMessage: "",
         location: { lat: null, lon: null }
       });
@@ -146,44 +146,84 @@ export default function Dashboard() {
               <button onClick={() => setShowModal(true)}>Add Your First Child</button>
             </div>
           ) : (
-            <div className={styles.tableWrapper}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Emergency Message</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {children.map((child) => (
-                    <tr key={child._id}>
-                      <td>
-                        <div className={styles.childCell}>
-                          <FaChild className={styles.childBlackIcon} />
-                          <span>{child.name}</span>
-                        </div>
-                      </td>
-                      <td>{child.age || "—"}</td>
-                      <td>
-                        <div className={styles.messageCell}>
-                          {child.emergencyMessage?.slice(0, 50)}...
-                        </div>
-                      </td>
-                      <td>
-                        <button 
-                          className={styles.viewBtn}
-                          onClick={() => navigate(`/child/${child._id}`)}
-                        >
-                          View Details <FaArrowRight />
-                        </button>
-                      </td>
+            <>
+              {/* Children Table for Desktop */}
+              <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Age</th>
+                      <th>Emergency Message</th>
+                      <th>Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {children.map((child) => (
+                      <tr key={child._id}>
+                        <td>
+                          <div className={styles.childCell}>
+                            <FaChild className={styles.childBlackIcon} />
+                            <span>{child.name}</span>
+                          </div>
+                        </td>
+                        <td>{child.age || "—"}</td>
+                        <td>
+                          <div className={styles.messageCell}>
+                            {child.emergencyMessage?.slice(0, 50)}...
+                          </div>
+                        </td>
+                        <td>
+                          <button
+                            className={styles.viewBtn}
+                            onClick={() => navigate(`/child/${child._id}`)}
+                          >
+                            View Details <FaArrowRight />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {/* Children Cards for Mobile */}
+              <div className={styles.childrenCards}>
+                {children.map((child) => (
+                  <div key={child._id} className={styles.childCard}>
+                    <div className={styles.cardHeader}>
+                      <div className={styles.childName}>
+                        <FaChild />
+                        <h4>{child.name}</h4>
+                      </div>
+                      {child.age && (
+                        <div className={styles.childAge}>
+                          {child.age} years
+                        </div>
+                      )}
+                    </div>
+
+                    <div className={styles.cardBody}>
+                      <div className={styles.messageSection}>
+                        <span className={styles.messageLabel}>Emergency Message</span>
+                        <p className={styles.messageText}>
+                          {child.emergencyMessage?.slice(0, 80)}
+                          {child.emergencyMessage?.length > 80 && "..."}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className={styles.cardFooter}>
+                      <button
+                        className={styles.viewCardBtn}
+                        onClick={() => navigate(`/child/${child._id}`)}
+                      >
+                        View Details <FaArrowRight />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
       </div>
@@ -212,10 +252,10 @@ export default function Dashboard() {
                 <label>Age <span>(Optional)</span></label>
                 <input
                   type="number"
-                  placeholder="0-18"
+                  placeholder="1-18"
                   value={formData.age}
                   onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                  min="0"
+                  min="1"
                   max="18"
                 />
               </div>
@@ -237,12 +277,12 @@ export default function Dashboard() {
                 <div className={styles.locationWarning}>
                   ⚠️ Location is sensitive information - share only if necessary
                 </div>
-                
+
                 {formData.location?.lat ? (
                   <div className={styles.locationPreview}>
                     <p><strong>Latitude:</strong> {formData.location.lat}</p>
                     <p><strong>Longitude:</strong> {formData.location.lon}</p>
-                    <a 
+                    <a
                       href={`https://www.google.com/maps?q=${formData.location.lat},${formData.location.lon}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -250,7 +290,7 @@ export default function Dashboard() {
                     >
                       View on Google Maps →
                     </a>
-                    <button 
+                    <button
                       type="button"
                       className={styles.clearLocationBtn}
                       onClick={() => setFormData({ ...formData, location: { lat: null, lon: null } })}
@@ -259,7 +299,7 @@ export default function Dashboard() {
                     </button>
                   </div>
                 ) : (
-                  <button 
+                  <button
                     type="button"
                     className={styles.locationBtn}
                     onClick={getCurrentLocation}
@@ -269,7 +309,7 @@ export default function Dashboard() {
                   </button>
                 )}
                 <small className={styles.locationHint}>
-                  This will help finders locate your child's parents more easily 
+                  This will help finders locate your child's parents more easily
                 </small>
               </div>
 

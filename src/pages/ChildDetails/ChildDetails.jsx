@@ -269,8 +269,8 @@ export default function ChildDetails() {
                 type="number"
                 value={formData.age}
                 onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                placeholder="0-18"
-                min="0"
+                placeholder="1-18"
+                min="1"
                 max="18"
               />
             </div>
