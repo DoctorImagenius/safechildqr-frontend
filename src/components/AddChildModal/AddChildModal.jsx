@@ -71,7 +71,6 @@ export default function AddChildModal({ isOpen, onClose, onSuccess }) {
 
       await onSuccess(submitData);
       
-      // Reset form
       setFormData({
         name: "",
         age: "",

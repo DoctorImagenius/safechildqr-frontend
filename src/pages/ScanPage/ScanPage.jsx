@@ -95,21 +95,55 @@ export default function ScanPage() {
     // eslint-disable-next-line
   }, [code]);
 
-  const sendLocationToWhatsApp = (location) => {
-    const phone = parentData.emergencyNumber.replace(/^0/, "92");
-    const message = encodeURIComponent(
-      `🚨 URGENT: Child Location Shared!\n\n` +
-      `👶 Child: ${childData?.name || "Unknown"}\n` +
-      `📍 Location: ${location.mapsLink}\n` +
-      `⏰ Time: ${new Date().toLocaleString()}\n\n` +
-      `⚠️ Please come immediately!`
-    );
-    const whatsappUrl = `https://wa.me/${phone}?text=${message}`;
-    const newWindow = window.open(whatsappUrl, "_blank");
+  const formatPhone = (number) => {
+    return number.replace(/^0/, "92").replace(/^\+/, "");
+  };
 
-    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-      toast.success("Permission granted, Now press location button");
+  const getSenderInfo = () => {
+    return `${navigator.platform} | ${navigator.userAgent.split(" ")[0]}`;
+  };
+
+  const sendLocationToWhatsApp = (location) => {
+    const phone = formatPhone(parentData.emergencyNumber);
+
+    const message = encodeURIComponent(
+      `🚨 *SafeChildQR ALERT*\n\n` +
+      `Your child's *live location* has been shared.\n\n` +
+      `👶 ${childData?.name || "Child"}\n` +
+      `📍 ${location.mapsLink}\n` +
+      `⏰ ${new Date().toLocaleString()}\n\n` +
+      `📱 Sender: ${getSenderInfo()}\n\n` +
+      `⚠️ Please reach immediately.`
+    );
+
+    const url = `https://wa.me/${phone}?text=${message}`;
+    window.open(url, "_blank");
+  };
+
+  const handleWhatsApp = () => {
+    if (!parentData?.emergencyNumber) {
+      toast.error("Emergency number not available");
+      return;
     }
+
+    if (!isOnline) {
+      toast.warning("WhatsApp requires internet. Please call instead.");
+      return;
+    }
+
+    const phone = formatPhone(parentData.emergencyNumber);
+
+    const message = encodeURIComponent(
+      `🚨 *SafeChildQR EMERGENCY*\n\n` +
+      `Your child has been found.\n\n` +
+      `👶 Name: ${childData?.name || "Unknown"}\n` +
+      `🎂 Age: ${childData?.age || "N/A"}\n` +
+      `⏰ ${new Date().toLocaleString()}\n\n` +
+      `📱 Sender: ${getSenderInfo()}\n\n` +
+      `⚠️ Please contact immediately.`
+    );
+
+    window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
   };
 
   const handleShareLocation = async () => {
@@ -169,26 +203,6 @@ export default function ScanPage() {
     } else {
       toast.error("Emergency number not available");
     }
-  };
-
-  const handleWhatsApp = () => {
-    if (!parentData?.emergencyNumber) {
-      toast.error("Emergency number not available");
-      return;
-    }
-    if (!isOnline) {
-      toast.warning("WhatsApp requires internet connection. Please call the parent directly.");
-      return;
-    }
-    const phone = parentData.emergencyNumber.replace(/^0/, "92").replace(/^\+/, "");
-    const message = encodeURIComponent(
-      `🚨 EMERGENCY ALERT: Lost Child Found!\n\n` +
-      `👶 Child Name: ${childData?.name || "Unknown"}\n` +
-      `📅 Age: ${childData?.age || "Not specified"}\n` +
-      `⏰ Time: ${new Date().toLocaleString()}\n\n` +
-      `⚠️ Please respond immediately!`
-    );
-    window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
   };
 
   const handleCopyNumber = () => {
