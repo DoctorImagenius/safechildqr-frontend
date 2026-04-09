@@ -1,12 +1,12 @@
 import styles from "./Home.module.css";
 import { NavLink } from "react-router-dom";
-import { 
-  FaShieldAlt, 
-  FaQrcode, 
-  FaUserPlus, 
-  FaChild, 
-  FaEnvelope, 
-  FaWhatsapp, 
+import {
+  FaShieldAlt,
+  FaQrcode,
+  FaUserPlus,
+  FaChild,
+  FaEnvelope,
+  FaWhatsapp,
   FaMapMarkerAlt,
   FaGlobe,
   FaMobileAlt,
@@ -49,16 +49,7 @@ const Home = () => {
             </div>
           </div>
           <div className={styles.heroPreview}>
-            <div className={styles.qrCard}>
-              <div className={styles.qrCode}></div>
-              <div className={styles.qrInfo}>
-                <FaChild /> Emma Johnson • Age 7
-              </div>
-              <div className={styles.qrActions}>
-                <button><FaPhoneAlt /> Call</button>
-                <button><FaWhatsapp /> WhatsApp</button>
-              </div>
-            </div>
+            <img className={styles.heroImage} src="/assets/web-app-manifest-512x512.png" alt="SafeChildQR Logo" />
           </div>
         </div>
       </section>

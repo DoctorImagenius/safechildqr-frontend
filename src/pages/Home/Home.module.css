@@ -601,6 +601,36 @@
   color: #f59e0b;
 }
 
+.heroPreview {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.heroPreview img {
+  width: 400px;
+  height: 400px;
+  object-fit: contain;
+  animation: fadeInUp 0.8s ease 0.2s both;
+  border-radius: 30px;
+
+}
+
+@media (max-width: 968px) {
+  .heroPreview img {
+    width: 220px;
+    height: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroPreview img {
+    width: 180px;
+    height: 180px;
+  }
+}
+
 /* Responsive */
 @media (max-width: 968px) {
   .hero .container,
