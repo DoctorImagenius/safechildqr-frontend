@@ -24,14 +24,12 @@ export default function Scanner() {
     }
   };
 
-  // Auto-scan every 500ms
   const captureAndScan = () => {
     if (!webcamRef.current || !scanning) return;
 
     const imageSrc = webcamRef.current.getScreenshot();
     if (!imageSrc) return;
 
-    // Convert base64 to image data
     const img = new Image();
     img.src = imageSrc;
     img.onload = () => {
@@ -54,14 +52,11 @@ export default function Scanner() {
     };
   };
 
-  // Start auto-scanning when camera is ready
   useEffect(() => {
     if (scanning && webcamRef.current) {
-      // Clear any existing interval
       if (scanIntervalRef.current) {
         clearInterval(scanIntervalRef.current);
       }
-      // Start new interval
       scanIntervalRef.current = setInterval(() => {
         captureAndScan();
       }, 500);
@@ -76,7 +71,6 @@ export default function Scanner() {
   }, [scanning]);
 
   const processQRCode = (decodedText) => {
-
     decodedText = decodedText.split("/scan/")[1];
     stopScanner();
     navigate(`/scan/${decodedText}`);

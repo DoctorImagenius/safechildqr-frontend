@@ -3,9 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* background: linear-gradient(135deg, #81a2f7 0%, #f8e1a0 100%); */
   background: linear-gradient(135deg, #81a2f7 0%, #fdeec3 100%);
-
   padding: 20px;
 }
 

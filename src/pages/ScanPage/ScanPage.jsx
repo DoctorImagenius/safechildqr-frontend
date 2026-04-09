@@ -312,19 +312,12 @@ export default function ScanPage() {
             <FaPhoneAlt /> Quick Actions
           </div>
           <div className={styles.actionGrid}>
+          
             <button className={styles.actionCard} onClick={handleCall}>
               <FaPhoneAlt className={styles.actionIconCall} />
               <div>
-                <h4>Call Parent</h4>
-                <p>Direct emergency call</p>
-              </div>
-            </button>
-
-            <button className={styles.actionCard} onClick={handleWhatsApp} disabled={!isOnline}>
-              <FaWhatsapp className={styles.actionIconWhatsapp} />
-              <div>
-                <h4>WhatsApp</h4>
-                <p>{!isOnline ? "Requires internet" : "Send message"}</p>
+                <h4>Call Parent Now</h4>
+                <p>Talk instantly for help</p>
               </div>
             </button>
 
@@ -337,9 +330,9 @@ export default function ScanPage() {
               <div>
                 <h4>
                   {gettingLocation
-                    ? "Getting location..."
+                    ? "Getting your location..."
                     : hasLocationPermission && savedLocation
-                      ? "Send Location Now"
+                      ? "Send Location to Parent"
                       : "Share Location"}
                 </h4>
                 <p>
@@ -347,8 +340,16 @@ export default function ScanPage() {
                     ? "Requires internet"
                     : hasLocationPermission && savedLocation
                       ? "⚡ Click to share on WhatsApp"
-                      : "Allow location access"}
+                      : "Allow location access to help the parent find you"}
                 </p>
+              </div>
+            </button>
+
+            <button className={styles.actionCard} onClick={handleWhatsApp} disabled={!isOnline}>
+              <FaWhatsapp className={styles.actionIconWhatsapp} />
+              <div>
+                <h4>WhatsApp</h4>
+                <p>{!isOnline ? "Requires internet" : "Message on WhatsApp"}</p>
               </div>
             </button>
 
