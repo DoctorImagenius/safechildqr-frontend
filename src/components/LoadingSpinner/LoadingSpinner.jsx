@@ -8,7 +8,6 @@ export default function LoadingSpinner({ message = "Loading..." }) {
         alt="Loading..." 
         className={styles.spinningLogo}
         loading="eager"
-        fetchpriority="high"
       />
       <p>{message}</p>
     </div>
