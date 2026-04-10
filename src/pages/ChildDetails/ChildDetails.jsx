@@ -19,6 +19,7 @@ export default function ChildDetails() {
   const navigate = useNavigate();
   const [child, setChild] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingAction, setLoadingAction] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [qrValue, setQrValue] = useState("");
   const [formData, setFormData] = useState({
@@ -67,6 +68,7 @@ export default function ChildDetails() {
     }
 
     try {
+      setLoadingAction(true);
       const updateData = {};
       if (formData.name) updateData.name = formData.name;
       if (formData.age) updateData.age = parseInt(formData.age);
@@ -80,8 +82,10 @@ export default function ChildDetails() {
       await childAPI.update(id, updateData);
       toast.success("Updated successfully");
       setIsEditing(false);
+      setLoadingAction(false);
       fetchChild();
     } catch (error) {
+      setLoadingAction(false);
       toast.error(error.response?.data?.message || "Update failed");
     }
   };
@@ -212,8 +216,8 @@ export default function ChildDetails() {
               <button type="button" className={styles.cancelBtn} onClick={() => setIsEditing(false)}>
                 Cancel
               </button>
-              <button type="submit" className={styles.saveBtn}>
-                <FaSave /> Save Changes
+              <button type="submit" className={styles.saveBtn} disabled={loadingAction}>
+                {loadingAction ? "Saving..." : <><FaSave /> Save Changes</>}
               </button>
             </div>
           </form>

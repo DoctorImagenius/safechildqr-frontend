@@ -5,6 +5,7 @@ import styles from "./AddChildModal.module.css";
 
 export default function AddChildModal({ isOpen, onClose, onSuccess }) {
   const [gettingLocation, setGettingLocation] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     age: "",
@@ -59,6 +60,7 @@ export default function AddChildModal({ isOpen, onClose, onSuccess }) {
     }
 
     try {
+      setLoading(true);
       const submitData = {
         name: formData.name,
         emergencyMessage: formData.emergencyMessage,
@@ -78,7 +80,9 @@ export default function AddChildModal({ isOpen, onClose, onSuccess }) {
         location: { lat: null, lon: null }
       });
       onClose();
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       toast.error(error.response?.data?.message || "Operation failed");
     }
   };
@@ -167,7 +171,9 @@ export default function AddChildModal({ isOpen, onClose, onSuccess }) {
             </small>
           </div>
 
-          <button type="submit" className={styles.submitBtn}>Add Child</button>
+          <button type="submit" className={styles.submitBtn} disabled={loading}>
+            {loading ? "Adding Child..." : "Add Child"}
+          </button>
         </form>
       </div>
     </div>
