@@ -49,7 +49,7 @@ const Home = () => {
             </div>
           </div>
           <div className={styles.heroPreview}>
-            <img className={styles.heroImage} src="/assets/web-app-manifest-512x512.png" alt="SafeChildQR Logo" />
+            <img className={styles.heroImage} src="/assets/web-app-manifest-512x512.png" alt="SafeChildQR Logo"  loading="eager"/>
           </div>
         </div>
       </section>
