@@ -64,7 +64,8 @@ export default function Signup() {
       toast.success("Account created successfully!");
       navigate("/dashboard");
     } catch (error) {
-      const message = error.response?.data?.message || "Signup failed";
+      const message = error.response?.data?.details?.[0]?.msg || error.response?.data?.message || "Signup failed. Please try again.";
+      console.log(error.response?.data?.message);
       toast.error(message);
     } finally {
       setLoading(false);

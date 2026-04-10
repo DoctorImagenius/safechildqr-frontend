@@ -29,7 +29,7 @@ export default function Login() {
       toast.success("Login successful!");
       navigate("/dashboard");
     } catch (error) {
-      const message = error.response?.data?.message || "Login failed";
+      const message = error.response?.data?.message || error.response?.data;
       toast.error(message);
     } finally {
       setLoading(false);

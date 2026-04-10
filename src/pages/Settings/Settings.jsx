@@ -63,7 +63,8 @@ export default function Settings() {
         toast.info("No changes to update");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Update failed");
+      const message = error.response?.data?.details?.[0]?.msg || error.response?.data?.message || "Update failed. Please try again.";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
