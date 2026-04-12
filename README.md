@@ -1,70 +1,135 @@
-# Getting Started with Create React App
+# SafeChildQR Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Frontend for the SafeChildQR child safety and recovery platform. This React application lets parents create an account, manage child profiles, generate QR-based recovery pages, and handle scan interactions for finders.
+
+## Tech Stack
+
+- React
+- React Router
+- Axios
+- React Toastify
+- React Icons
+- `react-qrcode-logo`
+- `react-webcam`
+- `jsqr`
+
+## Main Features
+
+- Parent signup and login
+- Protected dashboard for parents
+- Add, view, edit, and delete child profiles
+- QR code generation for each child
+- Download-ready QR display
+- Public scan page for finders
+- Call parent directly from the scan page
+- Send WhatsApp alert to parent
+- Share live location through WhatsApp when permission is granted
+- Offline fallback that extracts the emergency number from the QR code
+
+## Project Structure
+
+```text
+frontend/
+├── public/
+├── src/
+│   ├── components/
+│   ├── context/
+│   ├── pages/
+│   ├── services/
+│   └── styles/
+├── package.json
+└── README.md
+```
+
+## Main Pages
+
+- `/` - Landing page
+- `/login` - Parent login
+- `/signup` - Parent registration
+- `/dashboard` - Parent dashboard
+- `/child/:id` - Child details and QR management
+- `/settings` - Parent account settings
+- `/scanner` - Camera-based QR scanner
+- `/scan/:code` - Public QR scan result page
+
+## Environment Variables
+
+Create a `.env` file inside `frontend/`:
+
+```env
+REACT_APP_API_URL=http://localhost:5000
+REACT_APP_WEB_URL=http://localhost:3000
+```
+
+## Installation
+
+```bash
+cd frontend
+npm install
+```
 
 ## Available Scripts
 
-In the project directory, you can run:
+```bash
+npm start
+```
 
-### `npm start`
+Runs the app in development mode on `http://localhost:3000`.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```bash
+npm run build
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Builds the production bundle.
 
-### `npm test`
+```bash
+npm test
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Runs the React test command.
 
-### `npm run build`
+## How It Works
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Parent signs up or logs in.
+2. Parent adds a child profile with an emergency message.
+3. The app generates a QR value using:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```text
+{REACT_APP_WEB_URL}/scan/{childId}+{emergencyNumber}
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+4. If someone scans the QR code:
+   - Online mode loads child data from the backend
+   - Finder can call the parent or send a WhatsApp alert
+   - Finder can share location through WhatsApp if allowed
+5. If internet is unavailable, the page falls back to the emergency number encoded in the QR.
 
-### `npm run eject`
+## API Integration
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+The frontend uses `src/services/api.js` to talk to the backend.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- `POST /auth/signup`
+- `POST /auth/login`
+- `GET /parent/me`
+- `PUT /parent/me`
+- `DELETE /parent/me`
+- `POST /child`
+- `GET /child/:id`
+- `PUT /child/:id`
+- `DELETE /child/:id`
+- `GET /scan/:code`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Notes
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Authentication token is stored in `localStorage`.
+- Protected routes depend on the auth context.
+- The scan page supports online and offline behavior.
+- The current QR flow uses child ID plus emergency number in the encoded URL.
 
-## Learn More
+## Future Improvements
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Real-time live location with Socket.io
+- Push notifications
+- Multi-language support
+- Scan history analytics in the dashboard
+- Mobile app support
