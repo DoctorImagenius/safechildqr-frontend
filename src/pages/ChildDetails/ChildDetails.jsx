@@ -147,9 +147,8 @@ export default function ChildDetails() {
 
             {child.location?.lat && child.location?.lon && (
               <div className={styles.infoBox}>
-                <h3><FaMapMarkerAlt /> Child’s Home Location</h3>
+                <h3><FaMapMarkerAlt /> Child's Home Location</h3>
                 <div className={styles.locationDisplay}>
-                  <p><strong>Home Location Added</strong></p>
                   <button
                     className={styles.mapButton}
                     onClick={() => openGoogleMaps(child.location.lat, child.location.lon)}
