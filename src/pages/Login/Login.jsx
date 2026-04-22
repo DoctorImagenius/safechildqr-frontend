@@ -39,7 +39,6 @@ export default function Login() {
       setLoading(false);
     }
   };
-  // Floating icons array
   const floatingIcons = [
     FaShieldAlt, FaChild, FaQrcode, FaHeartbeat, 
     FaStar, FaHandHoldingHeart, FaUserShield, FaStar, 
@@ -48,7 +47,6 @@ export default function Login() {
 
   return (
     <div className={styles.loginContainer}>
-      {/* Floating animated elements */}
       <div className={styles.floatingElements}>
         {floatingIcons.map((Icon, index) => (
           <div key={index} className={styles.floatingIcon}>

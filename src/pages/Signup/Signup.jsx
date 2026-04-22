@@ -3,7 +3,9 @@ import { useNavigate, NavLink } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { authAPI } from "../../services/api";
 import { toast } from "react-toastify";
-import { FaEnvelope, FaLock, FaPhone, FaUserPlus, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaPhone, FaUserPlus, FaEyeSlash
+  , FaEye,FaShieldAlt, FaChild, FaQrcode, FaHeartbeat, FaStar, FaHandHoldingHeart, FaUserShield 
+} from "react-icons/fa";
 import styles from "./Signup.module.css";
 
 export default function Signup() {
@@ -71,9 +73,23 @@ export default function Signup() {
       setLoading(false);
     }
   };
+  const floatingIcons = [
+    FaShieldAlt, FaChild, FaQrcode, FaHeartbeat, 
+    FaStar, FaHandHoldingHeart, FaUserShield, FaStar, 
+    FaChild, FaQrcode, FaHeartbeat, FaShieldAlt, FaUserShield, FaHandHoldingHeart, FaStar
+  ];
 
   return (
     <div className={styles.signupContainer}>
+      <div className={styles.floatingElements}>
+        {floatingIcons.map((Icon, index) => (
+          <div key={index} className={styles.floatingIcon}>
+            <Icon />
+          </div>
+        ))}
+      </div>
+
+
       <div className={styles.signupCard}>
         <div className={styles.signupHeader}>
           <div className={styles.logo}>SafeChild<span className={styles.qr}>QR</span></div>
