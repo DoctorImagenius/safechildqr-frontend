@@ -108,7 +108,7 @@ export default function ScanPage() {
 
     const message = encodeURIComponent(
       `🚨 *SafeChildQR ALERT*\n\n` +
-      `Your child's *live location* has been shared.\n\n` +
+      `Your child's *current location* has been shared.\n\n` +
       `👶 ${childData?.name || "Child"}\n` +
       `📍 ${location.mapsLink}\n` +
       `⏰ ${new Date().toLocaleString()}\n\n` +
