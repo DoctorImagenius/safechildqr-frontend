@@ -3,7 +3,11 @@ import { useNavigate, NavLink } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { authAPI } from "../../services/api";
 import { toast } from "react-toastify";
-import { FaEnvelope, FaLock, FaSignInAlt, FaEye, FaEyeSlash } from "react-icons/fa";
+import { 
+  FaEnvelope, FaLock, FaSignInAlt, FaEye, FaEyeSlash,
+  FaShieldAlt, FaChild, FaQrcode, FaHeartbeat, 
+  FaStar, FaHandHoldingHeart, FaUserShield 
+} from "react-icons/fa";
 import styles from "./Login.module.css";
 
 export default function Login() {
@@ -35,9 +39,23 @@ export default function Login() {
       setLoading(false);
     }
   };
+  // Floating icons array
+  const floatingIcons = [
+    FaShieldAlt, FaChild, FaQrcode, FaHeartbeat, 
+    FaStar, FaHandHoldingHeart, FaUserShield, FaStar, 
+    FaChild, FaQrcode, FaHeartbeat, FaShieldAlt, FaUserShield, FaHandHoldingHeart, FaStar
+  ];
 
   return (
     <div className={styles.loginContainer}>
+      {/* Floating animated elements */}
+      <div className={styles.floatingElements}>
+        {floatingIcons.map((Icon, index) => (
+          <div key={index} className={styles.floatingIcon}>
+            <Icon />
+          </div>
+        ))}
+      </div>
       <div className={styles.loginCard}>
         <div className={styles.loginHeader}>
           <div className={styles.logo}>SafeChild<span className={styles.qr}>QR</span></div>

@@ -8,6 +8,8 @@
 }
 
 .loginCard {
+  position: relative;
+  z-index: 1;
   background: white;
   border-radius: 24px;
   padding: 40px;
@@ -135,7 +137,59 @@
   text-decoration: underline;
 }
 
-@media (max-width: 640px) {
+/* Floating elements container */
+.floatingElements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Individual floating icons */
+.floatingIcon {
+  position: absolute;
+  font-size: 40px;
+  opacity: 0.15;
+  animation: float 6s ease-in-out infinite;
+}
+
+.floatingIcon:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; font-size: 60px; }
+.floatingIcon:nth-child(2) { top: 20%; right: 8%; animation-delay: 1s; font-size: 45px; }
+.floatingIcon:nth-child(3) { bottom: 15%; left: 10%; animation-delay: 2s; font-size: 55px; }
+.floatingIcon:nth-child(4) { bottom: 25%; right: 12%; animation-delay: 0.5s; font-size: 50px; }
+.floatingIcon:nth-child(5) { top: 40%; left: 15%; animation-delay: 1.5s; font-size: 35px; }
+.floatingIcon:nth-child(6) { bottom: 40%; right: 18%; animation-delay: 2.5s; font-size: 40px; }
+.floatingIcon:nth-child(7) { top: 65%; left: 8%; animation-delay: 0.8s; font-size: 30px; }
+.floatingIcon:nth-child(8) { top: 15%; left: 20%; animation-delay: 1.8s; font-size: 25px; }
+.floatingIcon:nth-child(9) { bottom: 20%; right: 5%; animation-delay: 2.8s; font-size: 45px; }
+.floatingIcon:nth-child(10) { top: 50%; left: 25%; animation-delay: 0.3s; font-size: 50px; }
+.floatingIcon:nth-child(11) { bottom: 30%; right: 10%; animation-delay: 1.2s; font-size: 35px; }
+.floatingIcon:nth-child(12) { top: 30%; left: 30%; animation-delay: 2.2s; font-size: 40px; }
+.floatingIcon:nth-child(13) { bottom: 10%; right: 15%; animation-delay: 0.7s; font-size: 30px; }
+.floatingIcon:nth-child(14) { top: 60%; left: 5%; animation-delay: 1.7s; font-size: 25px; }
+.floatingIcon:nth-child(15) { bottom: 25%; right: 20%; animation-delay: 2.7s; font-size: 45px; }
+
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .floatingElements{
+    display: none;
+  }
+  
   .loginCard {
     padding: 30px 20px;
   }
