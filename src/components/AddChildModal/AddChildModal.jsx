@@ -72,7 +72,7 @@ export default function AddChildModal({ isOpen, onClose, onSuccess }) {
       }
 
       await onSuccess(submitData);
-      
+
       setFormData({
         name: "",
         age: "",
@@ -131,29 +131,28 @@ export default function AddChildModal({ isOpen, onClose, onSuccess }) {
           </div>
 
           <div className={styles.formGroup}>
-            <label><FaLocationArrow /> Location <span>(Optional)</span></label>
+            <label><FaLocationArrow /> Child's Home Location <span>(Optional)</span></label>
             <div className={styles.locationWarning}>
               ⚠️ Location is sensitive information - share only if necessary
             </div>
 
             {formData.location?.lat ? (
               <div className={styles.locationPreview}>
-                <p><strong>Latitude:</strong> {formData.location.lat}</p>
-                <p><strong>Longitude:</strong> {formData.location.lon}</p>
+                <p><strong>Child’s Home Location Added</strong></p>
                 <a
                   href={`https://www.google.com/maps?q=${formData.location.lat},${formData.location.lon}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.mapPreviewLink}
                 >
-                  View on Google Maps →
+                  View on Map →
                 </a>
                 <button
                   type="button"
                   className={styles.clearLocationBtn}
                   onClick={() => setFormData({ ...formData, location: { lat: null, lon: null } })}
                 >
-                  <FaTimes /> Clear Location
+                  <FaTimes /> Remove Location
                 </button>
               </div>
             ) : (

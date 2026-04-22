@@ -412,21 +412,20 @@
 
 .coordinates {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 16px;
-  background: #f8fafc;
-  padding: 12px;
+  background: #fef3c7; 
+  padding: 12px 14px;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
 }
 
 .coordinates span {
-  font-size: 13px;
-  font-family: monospace;
-  color: #1b263b;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #d97706;
 }
-
 .mapLink {
   display: inline-flex;
   align-items: center;

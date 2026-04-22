@@ -14,7 +14,7 @@
 
 .locationPreview {
   background: #f1f5f9;
-  padding: 12px;
+  padding: 10px;
   border-radius: 8px;
   margin-top: 8px;
 }
@@ -34,7 +34,6 @@
   cursor: pointer;
   font-size: 12px;
   margin-right: 8px;
-  margin-bottom: 8px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -55,6 +54,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  margin-top: 5px;
 }
 
 .locationBtn {

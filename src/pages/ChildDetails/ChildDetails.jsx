@@ -61,7 +61,7 @@ export default function ChildDetails() {
       toast.error("Name is required");
       return;
     }
-    
+
     if (!formData.emergencyMessage) {
       toast.error("Emergency message is required");
       return;
@@ -109,7 +109,7 @@ export default function ChildDetails() {
     window.open(`https://www.google.com/maps?q=${lat},${lon}`, "_blank");
   };
 
- if (loading) {
+  if (loading) {
     return <LoadingSpinner message="Loading child..." />;
   }
   
@@ -147,10 +147,9 @@ export default function ChildDetails() {
 
             {child.location?.lat && child.location?.lon && (
               <div className={styles.infoBox}>
-                <h3><FaMapMarkerAlt /> Location</h3>
+                <h3><FaMapMarkerAlt /> Child’s Home Location</h3>
                 <div className={styles.locationDisplay}>
-                  <p><strong>Latitude:</strong> {child.location.lat}</p>
-                  <p><strong>Longitude:</strong> {child.location.lon}</p>
+                  <p><strong>Home Location Added</strong></p>
                   <button
                     className={styles.mapButton}
                     onClick={() => openGoogleMaps(child.location.lat, child.location.lon)}
@@ -202,7 +201,7 @@ export default function ChildDetails() {
             </div>
 
             <div className={styles.field}>
-              <label><FaMapMarkerAlt /> Location <span>(Optional)</span></label>
+              <label><FaMapMarkerAlt /> Child's Home Location <span>(Optional)</span></label>
               <LocationPicker
                 location={formData.location}
                 onLocationChange={(newLocation) => 

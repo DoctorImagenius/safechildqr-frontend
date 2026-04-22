@@ -53,8 +53,7 @@ export default function LocationPicker({ location, onLocationChange, showWarning
 
       {location?.lat && location?.lon ? (
         <div className={styles.locationPreview}>
-          <p><strong>Latitude:</strong> {location.lat}</p>
-          <p><strong>Longitude:</strong> {location.lon}</p>
+          <p><strong>Home Location Added</strong></p>
           <button
             type="button"
             className={styles.testMapBtn}
@@ -67,7 +66,7 @@ export default function LocationPicker({ location, onLocationChange, showWarning
             className={styles.clearLocationBtn}
             onClick={clearLocation}
           >
-            <FaTimes /> Clear Location
+            <FaTimes /> Remove Location
           </button>
         </div>
       ) : (

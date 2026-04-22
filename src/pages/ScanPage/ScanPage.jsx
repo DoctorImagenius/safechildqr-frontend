@@ -382,11 +382,10 @@ export default function ScanPage() {
             <div className={styles.locationCard}>
               <div className={styles.locationInfo}>
                 <div className={styles.coordinates}>
-                  <span>Latitude: {childData.location.lat}</span>
-                  <span>Longitude: {childData.location.lon}</span>
+                  <span>This is the child's home location</span>
                 </div>
                 <a href={`https://www.google.com/maps?q=${childData.location.lat},${childData.location.lon}`} target="_blank" rel="noopener noreferrer" className={styles.mapLink}>
-                  <FaGlobe /> Open in Google Maps
+                  <FaGlobe /> View Location →
                 </a>
               </div>
             </div>
