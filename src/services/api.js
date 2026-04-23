@@ -37,4 +37,8 @@ export const scanAPI = {
   scan: (code) => api.get(`/scan/${code}`),
 };
 
+export const statsAPI = {
+  get: () => api.get("/stats"),
+};
+
 export default api;

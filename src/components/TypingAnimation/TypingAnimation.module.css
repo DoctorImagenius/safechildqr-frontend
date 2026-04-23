@@ -1,0 +1,152 @@
+.typingContainer {
+  height: 130px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.typingWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.heroPrefix {
+  width: 100%;
+  display: flex;
+  gap: 4px;
+}
+
+.logoText {
+  font-size: 52px;
+  font-weight: 800;
+  color: white;
+}
+
+.qrText {
+  font-size: 52px;
+  font-weight: 800;
+  color: #f59e0b;
+}
+
+.typingBox {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.typingLabel {
+  font-size: 32px;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.typingText {
+  font-size: 38px;
+  font-weight: 700;
+  color: #f59e0b;
+  display: inline-block;
+}
+
+.cursor {
+  display: inline-block;
+  animation: blink 0.7s infinite;
+  color: #f59e0b;
+  font-size: 38px;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@media (max-width: 968px) {
+  .typingContainer {
+    height: 110px;
+    justify-content: center;
+  }
+  
+  .typingWrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .heroPrefix {
+    justify-content: center;
+  }
+  
+  .logoText,
+  .qrText {
+    font-size: 42px;
+  }
+  
+  .typingLabel {
+    font-size: 26px;
+  }
+  
+  .typingText,
+  .cursor {
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .typingContainer {
+    height: 100px;
+    justify-content: center;
+  }
+  
+  .typingWrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .typingBox {
+    justify-content: center;
+  }
+  
+  .heroPrefix {
+    justify-content: center;
+  }
+  
+  .logoText,
+  .qrText {
+    font-size: 36px;
+  }
+  
+  .typingLabel {
+    font-size: 22px;
+  }
+  
+  .typingText,
+  .cursor {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 640px) {
+  .typingContainer {
+    height: 90px;
+    justify-content: center;
+  }
+  
+  .logoText,
+  .qrText {
+    font-size: 28px;
+  }
+  
+  .typingLabel {
+    font-size: 18px;
+  }
+  
+  .typingText,
+  .cursor {
+    font-size: 22px;
+  }
+}

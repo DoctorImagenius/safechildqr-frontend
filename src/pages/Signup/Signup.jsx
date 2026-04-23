@@ -115,7 +115,7 @@ export default function Signup() {
             <input
               type={showPassword ? "text" : "password"}
               name="password"
-              placeholder="Password (8+ chars, strong)"
+              placeholder="Password"
               value={formData.password}
               onChange={handleChange}
               disabled={loading}
@@ -153,7 +153,7 @@ export default function Signup() {
             <input
               type="tel"
               name="emergencyNumber"
-              placeholder="Emergency Number (03XXXXXXXXX)"
+              placeholder="Emergency Number"
               value={formData.emergencyNumber}
               onChange={handleChange}
               disabled={loading}
