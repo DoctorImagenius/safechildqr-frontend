@@ -124,7 +124,7 @@
 }
 
 .mapButton {
-  background: #3b82f6;
+  background: #182234d3;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -139,7 +139,7 @@
 }
 
 .mapButton:hover {
-  background: #2563eb;
+  background: #182234;
   transform: translateY(-1px);
 }
 

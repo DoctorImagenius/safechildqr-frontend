@@ -149,7 +149,7 @@
 }
 
 .locationBtn {
-  background: #3b82f6;
+  background: #182234d3;
   color: white;
   border: none;
   padding: 10px 16px;
@@ -161,6 +161,10 @@
   font-size: 14px;
   width: 100%;
   justify-content: center;
+}
+
+.locationBtn:hover{
+  background: #182234;
 }
 
 .locationBtn:disabled {
