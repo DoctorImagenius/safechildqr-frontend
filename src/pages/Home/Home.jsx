@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa";
 import { statsAPI } from "../../services/api";
 import TypingAnimation from "../../components/TypingAnimation/TypingAnimation";
+import Footer from "../../components/Footer/Footer";
 
 const Home = () => {
   const [stats, setStats] = useState({
@@ -235,24 +236,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className={styles.cta}>
-        <div className={styles.container}>
-          <div className={styles.ctaContent}>
-            <h2>Ready to Protect Your Child?</h2>
-            <p>Join thousands of parents who trust SafeChildQR for their children's safety</p>
-            <div className={styles.ctaButtons}>
-              <NavLink to="/signup" className={styles.btnPrimary}>
-                Sign Up Now <FaArrowRight />
-              </NavLink>
-              <NavLink to="/scanner" className={styles.btnSecondary}>
-                Try Demo Scanner
-              </NavLink>
-            </div>
-            <p className={styles.ctaNote}>✓ Free forever ✓ No credit card required ✓ Cancel anytime</p>
-          </div>
-        </div>
-      </section>
+      <Footer />
     </div>
   );
 };
