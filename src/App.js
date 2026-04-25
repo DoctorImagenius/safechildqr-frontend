@@ -9,6 +9,7 @@ import Settings from "./pages/Settings/Settings";
 import Scanner from "./pages/Scanner/Scanner";
 import ScanPage from "./pages/ScanPage/ScanPage";
 import ChildDetails from "./pages/ChildDetails/ChildDetails";
+import NotFound from "./pages/NotFound/NotFound";
 import Header from "./components/Header/Header";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
@@ -34,6 +35,7 @@ function App() {
         <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/child/:id" element={token ? <ChildDetails /> : <Navigate to="/login" />} />
         <Route path="/settings" element={token ? <Settings /> : <Navigate to="/login" />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
