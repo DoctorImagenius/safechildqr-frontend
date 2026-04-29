@@ -95,14 +95,14 @@ export default function ScanHistory({ scans: initialScans, stats: initialStats }
           <FaMobileAlt />
           <div>
             <strong>{stats?.uniqueDevices || 0}</strong>
-            <span>Devices</span>
+            <span>Unique Devices</span>
           </div>
         </div>
         <div className={styles.stat}>
           <FaGlobe />
           <div>
             <strong>{stats?.uniqueIPs || 0}</strong>
-            <span>Locations</span>
+            <span>Unique Locations</span>
           </div>
         </div>
       </div>
