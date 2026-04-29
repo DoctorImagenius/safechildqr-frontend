@@ -1,0 +1,92 @@
+.tableCard {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.childIcon {
+  color: #f59e0b;
+  font-size: 18px;
+}
+
+.title h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.badge {
+  background: #f59e0b;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.addBtn {
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.addBtn:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .tableHeader {
+    padding: 16px;
+  }
+  
+  .title h3 {
+    font-size: 16px;
+  }
+  
+  .addBtn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 500px) {
+  .tableHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .addBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}

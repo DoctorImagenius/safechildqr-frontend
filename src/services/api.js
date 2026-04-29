@@ -23,6 +23,7 @@ export const parentAPI = {
   getProfile: () => api.get("/parent/me"),
   updateProfile: (data) => api.put("/parent/me", data),
   deleteAccount: () => api.delete("/parent/me"),
+  getScanLogs: () => api.get("/parent/scans"),
 };
 
 export const childAPI = {

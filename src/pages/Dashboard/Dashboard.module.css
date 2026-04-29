@@ -10,62 +10,48 @@
   padding: 0 24px;
 }
 
-.loading {
+/* Tabs */
+.tabs {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: calc(100vh - 60px);
-  font-size: 18px;
-  color: #64748b;
-}
-
-/* Table Card */
-.tableCard {
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.tableHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
+  gap: 12px;
+  margin-bottom: 24px;
   border-bottom: 1px solid #e2e8f0;
 }
 
-.tableHeader h3 {
+.tabBtn {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 18px;
-  color: #0f172a;
-}
-
-.childIcon {
-  color: #f59e0b;
-  font-size: 18px;
-}
-
-.addBtn {
-  background: #f59e0b;
-  color: white;
+  padding: 12px 24px;
+  background: none;
   border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
   transition: all 0.3s;
+  position: relative;
+  border-radius: 8px 8px 0 0;
 }
 
-.addBtn:hover {
-  background: #d97706;
-  transform: translateY(-1px);
+.tabBtn:hover {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.activeTab {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.activeTab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #f59e0b;
 }
 
 /* Responsive */
@@ -74,30 +60,15 @@
     padding: 0 16px;
     padding-bottom: 80px;
   }
-
-  .tableHeader {
-    padding: 16px;
-  }
-
-  .tableHeader h3 {
-    font-size: 16px;
-  }
-
-  .addBtn {
-    padding: 6px 12px;
-    font-size: 13px;
-  }
 }
 
-@media (max-width: 500px) {
-  .tableHeader {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+@media (max-width: 640px) {
+  .tabs {
+    gap: 8px;
   }
-
-  .addBtn {
-    width: 100%;
-    justify-content: center;
+  
+  .tabBtn {
+    padding: 10px 16px;
+    font-size: 13px;
   }
 }
